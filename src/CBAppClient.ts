@@ -215,7 +215,7 @@ export class CBAppClient extends BaseRestClient {
     data: CBAppTransaction[];
   }> {
     if (params?.paginationURL) {
-      return this.getPrivate(params.paginationURL);
+      return this.getPrivate(`${params.paginationURL}`);
     }
     return this.getPrivate(`/v2/accounts/${params.account_id}/transactions`);
   }
