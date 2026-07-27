@@ -538,25 +538,17 @@ function main() {
     console.error('WebSocket exception:', error);
   });
 
-  try {
-    ws.subscribe(
-      {
-        topic: 'ticker',
-        payload: {
-          product_ids: ['BTC-USD'],
-        },
+  ws.subscribe(
+    {
+      topic: 'ticker',
+      payload: {
+        product_ids: ['BTC-USD'],
       },
-      WS_KEY_MAP.advTradeMarketData,
-    );
-  } catch (error) {
-    console.error('Ticker subscription failed:', error);
-  }
+    },
+    WS_KEY_MAP.advTradeMarketData,
+  );
 
-  try {
-    ws.subscribe('heartbeats', WS_KEY_MAP.advTradeMarketData);
-  } catch (error) {
-    console.error('Heartbeat subscription failed:', error);
-  }
+  ws.subscribe('heartbeats', WS_KEY_MAP.advTradeMarketData);
 
   process.once('SIGINT', () => {
     ws.closeAll();
@@ -626,25 +618,17 @@ function main() {
     console.error('Private WebSocket exception:', error);
   });
 
-  try {
-    ws.subscribe(
-      {
-        topic: 'user',
-        payload: {
-          product_ids: ['BTC-USD'],
-        },
+  ws.subscribe(
+    {
+      topic: 'user',
+      payload: {
+        product_ids: ['BTC-USD'],
       },
-      WS_KEY_MAP.advTradeUserData,
-    );
-  } catch (error) {
-    console.error('User subscription failed:', error);
-  }
+    },
+    WS_KEY_MAP.advTradeUserData,
+  );
 
-  try {
-    ws.subscribe('heartbeats', WS_KEY_MAP.advTradeUserData);
-  } catch (error) {
-    console.error('Heartbeat subscription failed:', error);
-  }
+  ws.subscribe('heartbeats', WS_KEY_MAP.advTradeUserData);
 
   process.once('SIGINT', () => {
     ws.closeAll();
@@ -879,7 +863,7 @@ Pass `WS_KEY_MAP` values explicitly. This keeps connection routing visible and p
 
 | Channel                   | Authentication | Main use                                                   |
 | ------------------------- | -------------- | ---------------------------------------------------------- |
-| `heartbeats`              | Public         | Keep subscriptions open and detect missed heartbeat counts |
+| `heartbeats`              | Public channel | Keep subscriptions open and detect missed heartbeat counts. On `advTradeUserData`, the SDK still signs the subscription JWT |
 | `ticker`                  | Public         | Price, volume, and best bid or ask changes                 |
 | `ticker_batch`            | Public         | Batched ticker changes                                     |
 | `market_trades`           | Public         | Recent trade updates                                       |
@@ -902,6 +886,8 @@ The SDK emits:
 - `reconnected` after the replacement connection opens.
 - `close` when a connection closes.
 - `exception` for connection, parsing, signing, or subscription failures.
+
+`subscribe()` is synchronous. JWT signing and send happen asynchronously, so handle those failures on `exception` rather than wrapping `subscribe()` in `try`/`catch`.
 
 Keep each event's `wsKey`, `channel`, `sequence_num`, and event `type`. A `subscriptions` response confirms the requested channel is active. It does not replace the initial channel snapshot or later updates.
 
@@ -998,25 +984,17 @@ async function main() {
     console.error('WebSocket exception:', error);
   });
 
-  try {
-    ws.subscribe(
-      {
-        topic: 'user',
-        payload: {
-          product_ids: ['BTC-USD'],
-        },
+  ws.subscribe(
+    {
+      topic: 'user',
+      payload: {
+        product_ids: ['BTC-USD'],
       },
-      WS_KEY_MAP.advTradeUserData,
-    );
-  } catch (error) {
-    console.error('User subscription failed:', error);
-  }
+    },
+    WS_KEY_MAP.advTradeUserData,
+  );
 
-  try {
-    ws.subscribe('heartbeats', WS_KEY_MAP.advTradeUserData);
-  } catch (error) {
-    console.error('Heartbeat subscription failed:', error);
-  }
+  ws.subscribe('heartbeats', WS_KEY_MAP.advTradeUserData);
 
   process.once('SIGINT', () => {
     ws.closeAll();
@@ -1062,7 +1040,7 @@ Each Coinbase client has its own default REST API host. The WebSocket client sel
 | ------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Advanced Trade live            | `https://api.coinbase.com`                         | `wss://advanced-trade-ws.coinbase.com` for market data                          |
 | Advanced Trade private stream  | `https://api.coinbase.com`                         | `wss://advanced-trade-ws-user.coinbase.com`                                     |
-| Advanced Trade static sandbox  | `https://api-sandbox.coinbase.com`                 | No Advanced Trade sandbox WebSocket                                             |
+| Advanced Trade static sandbox  | `https://api-sandbox.coinbase.com` via explicit `baseUrl` | No Advanced Trade sandbox WebSocket; SDK does not wire this through `useSandbox` |
 | Coinbase App live              | `https://api.coinbase.com`                         | No Coinbase App stream in this SDK                                              |
 | Coinbase Exchange live         | `https://api.exchange.coinbase.com`                | `wss://ws-feed.exchange.coinbase.com` or the authenticated direct feed          |
 | Coinbase Exchange sandbox      | `https://api-public.sandbox.exchange.coinbase.com` | `wss://ws-feed-public.sandbox.exchange.coinbase.com` or its direct sandbox feed |
@@ -1071,9 +1049,9 @@ Each Coinbase client has its own default REST API host. The WebSocket client sel
 | Coinbase Prime live            | `https://api.prime.coinbase.com`                   | `wss://ws-feed.prime.coinbase.com`                                              |
 | Legacy Commerce live           | `https://api.commerce.coinbase.com`                | No Commerce stream in this SDK                                                  |
 
-The [Advanced Trade static sandbox](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/sandbox) returns predefined mock responses for a limited set of account and order endpoints. It does not run a matching engine and is not a funded trading environment.
+The [Advanced Trade static sandbox](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/sandbox) returns predefined mock responses for a limited set of account and order endpoints. It does not run a matching engine and is not a funded trading environment. This SDK maps Advanced Trade `useSandbox: true` to an unavailable sandbox URL stub (`NoSandboxAvailable`). To call that Coinbase static sandbox host from `CBAdvancedTradeClient`, set `baseUrl: 'https://api-sandbox.coinbase.com'` explicitly.
 
-`useSandbox: true` is supported by `CBExchangeClient` and `CBInternationalClient`, and by the matching Exchange or International WebSocket connections. Sandbox credentials are separate from production credentials.
+`useSandbox: true` is supported by `CBExchangeClient` and `CBInternationalClient`, and by the matching Exchange or International WebSocket connections. On `WebsocketClient`, `useSandbox` is client-wide: it applies to every `wsKey` on that instance. Sandbox credentials are separate from production credentials.
 
 Do not set `useSandbox: true` on `CBAdvancedTradeClient` or an Advanced Trade WebSocket connection. Use public live data and `previewOrder()` for the safe Advanced Trade workflow in this tutorial.
 
@@ -1168,25 +1146,17 @@ async function main() {
     console.error('Proxied WebSocket exception:', error);
   });
 
-  try {
-    ws.subscribe(
-      {
-        topic: 'ticker',
-        payload: {
-          product_ids: ['BTC-USD'],
-        },
+  ws.subscribe(
+    {
+      topic: 'ticker',
+      payload: {
+        product_ids: ['BTC-USD'],
       },
-      WS_KEY_MAP.advTradeMarketData,
-    );
-  } catch (error) {
-    console.error('Proxied ticker subscription failed:', error);
-  }
+    },
+    WS_KEY_MAP.advTradeMarketData,
+  );
 
-  try {
-    ws.subscribe('heartbeats', WS_KEY_MAP.advTradeMarketData);
-  } catch (error) {
-    console.error('Proxied heartbeat subscription failed:', error);
-  }
+  ws.subscribe('heartbeats', WS_KEY_MAP.advTradeMarketData);
 
   process.once('SIGINT', () => {
     ws.closeAll();
@@ -1319,25 +1289,17 @@ async function main() {
     console.error('SOCKS5 WebSocket exception:', error);
   });
 
-  try {
-    ws.subscribe(
-      {
-        topic: 'ticker',
-        payload: {
-          product_ids: ['BTC-USD'],
-        },
+  ws.subscribe(
+    {
+      topic: 'ticker',
+      payload: {
+        product_ids: ['BTC-USD'],
       },
-      WS_KEY_MAP.advTradeMarketData,
-    );
-  } catch (error) {
-    console.error('SOCKS5 ticker subscription failed:', error);
-  }
+    },
+    WS_KEY_MAP.advTradeMarketData,
+  );
 
-  try {
-    ws.subscribe('heartbeats', WS_KEY_MAP.advTradeMarketData);
-  } catch (error) {
-    console.error('SOCKS5 heartbeat subscription failed:', error);
-  }
+  ws.subscribe('heartbeats', WS_KEY_MAP.advTradeMarketData);
 
   process.once('SIGINT', () => {
     ws.closeAll();
@@ -1439,7 +1401,7 @@ Advanced Trade is the normal Coinbase trading API for retail users. Coinbase Exc
 
 ### Does Advanced Trade have a sandbox?
 
-Coinbase provides a static Advanced Trade sandbox with predefined mock responses for selected account and order endpoints. It does not run a matching engine. `useSandbox: true` is not supported by `CBAdvancedTradeClient`.
+Coinbase provides a static Advanced Trade sandbox with predefined mock responses for selected account and order endpoints. It does not run a matching engine. `CBAdvancedTradeClient` accepts `useSandbox`, but for Advanced Trade the SDK resolves it to an unavailable sandbox URL stub. Use an explicit `baseUrl: 'https://api-sandbox.coinbase.com'` only when you intentionally need that static sandbox host.
 
 ### Does `previewOrder()` place an order?
 
