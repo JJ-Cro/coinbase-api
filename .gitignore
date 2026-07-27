@@ -19,6 +19,7 @@ testfile-cbexch.ts
 restClientRegex.ts
 privaterepotracker.txt
 examples/_TiagoTests
+examples/ignored/
 testfile.ts
 cbapidocs.txt
 repomix.sh
