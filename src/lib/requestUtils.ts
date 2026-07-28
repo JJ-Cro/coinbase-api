@@ -35,7 +35,9 @@ const exchangeSandboxURLMap = {
   [REST_CLIENT_TYPE_ENUM.exchange]:
     'https://api-public.sandbox.exchange.coinbase.com',
   [REST_CLIENT_TYPE_ENUM.international]: 'https://api-n5e1.coinbase.com',
-  [REST_CLIENT_TYPE_ENUM.advancedTrade]: 'NoSandboxAvailable',
+  // Static Advanced Trade sandbox (mocked accounts/orders). No matching engine / WebSocket sandbox.
+  // https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/sandbox
+  [REST_CLIENT_TYPE_ENUM.advancedTrade]: 'https://api-sandbox.coinbase.com',
   [REST_CLIENT_TYPE_ENUM.coinbaseApp]: 'NoSandboxAvailable',
   [REST_CLIENT_TYPE_ENUM.prime]: 'NoSandboxAvailable',
   [REST_CLIENT_TYPE_ENUM.commerce]: 'NoSandboxAvailable',
@@ -98,12 +100,14 @@ export interface RestClientOptions {
   /**
    * Connect to the sandbox for supported products
    *
+   * - Coinbase Advanced Trade: static REST sandbox (mocked accounts/orders, no matching engine):
+   *   https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/sandbox
    * - Coinbase Exchange: https://docs.cdp.coinbase.com/exchange/docs/sandbox
    * - Coinbase International: https://docs.cdp.coinbase.com/intx/docs/sandbox
    *
    * - Coinbase App: No sandbox available.
-   * - Coinbase Advanced Trade: No sandbox available.
    * - Coinbase Prime: No sandbox available.
+   * - Coinbase Commerce: No sandbox available.
    */
   useSandbox?: boolean;
 
