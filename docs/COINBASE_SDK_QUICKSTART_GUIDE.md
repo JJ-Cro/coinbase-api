@@ -885,9 +885,9 @@ The SDK emits:
 - `reconnect` when it begins restoring a dropped connection.
 - `reconnected` after the replacement connection opens.
 - `close` when a connection closes.
-- `exception` for connection, parsing, signing, or subscription failures.
+- `exception` for connection, parsing, and Coinbase-reported authentication or subscription failures.
 
-`subscribe()` is synchronous. JWT signing and send happen asynchronously, so handle those failures on `exception` rather than wrapping `subscribe()` in `try`/`catch`.
+`subscribe()` returns synchronously. The signed subscription request is sent asynchronously, so handle Coinbase rejections on `exception` rather than wrapping `subscribe()` in `try`/`catch`.
 
 Keep each event's `wsKey`, `channel`, `sequence_num`, and event `type`. A `subscriptions` response confirms the requested channel is active. It does not replace the initial channel snapshot or later updates.
 
