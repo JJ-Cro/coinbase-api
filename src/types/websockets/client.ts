@@ -55,8 +55,8 @@ export interface WSClientConfigurableOptions {
    * - Coinbase Exchange: https://docs.cdp.coinbase.com/exchange/docs/sandbox
    * - Coinbase International: https://docs.cdp.coinbase.com/intx/docs/sandbox
    *
+   * - Coinbase Advanced Trade: No WebSocket sandbox (REST static sandbox only via RestClientOptions.useSandbox).
    * - Coinbase App: No sandbox available.
-   * - Coinbase Advanced Trade: No sandbox available.
    * - Coinbase Prime: No sandbox available.
    */
   useSandbox?: boolean;

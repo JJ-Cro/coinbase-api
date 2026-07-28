@@ -1040,7 +1040,7 @@ Each Coinbase client has its own default REST API host. The WebSocket client sel
 | ------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------------- |
 | Advanced Trade live            | `https://api.coinbase.com`                         | `wss://advanced-trade-ws.coinbase.com` for market data                          |
 | Advanced Trade private stream  | `https://api.coinbase.com`                         | `wss://advanced-trade-ws-user.coinbase.com`                                     |
-| Advanced Trade static sandbox  | `https://api-sandbox.coinbase.com` via explicit `baseUrl` | No Advanced Trade sandbox WebSocket; SDK does not wire this through `useSandbox` |
+| Advanced Trade static sandbox  | `https://api-sandbox.coinbase.com` via `useSandbox: true` | No Advanced Trade sandbox WebSocket                                             |
 | Coinbase App live              | `https://api.coinbase.com`                         | No Coinbase App stream in this SDK                                              |
 | Coinbase Exchange live         | `https://api.exchange.coinbase.com`                | `wss://ws-feed.exchange.coinbase.com` or the authenticated direct feed          |
 | Coinbase Exchange sandbox      | `https://api-public.sandbox.exchange.coinbase.com` | `wss://ws-feed-public.sandbox.exchange.coinbase.com` or its direct sandbox feed |
@@ -1049,11 +1049,19 @@ Each Coinbase client has its own default REST API host. The WebSocket client sel
 | Coinbase Prime live            | `https://api.prime.coinbase.com`                   | `wss://ws-feed.prime.coinbase.com`                                              |
 | Legacy Commerce live           | `https://api.commerce.coinbase.com`                | No Commerce stream in this SDK                                                  |
 
-The [Advanced Trade static sandbox](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/sandbox) returns predefined mock responses for a limited set of account and order endpoints. It does not run a matching engine and is not a funded trading environment. This SDK maps Advanced Trade `useSandbox: true` to an unavailable sandbox URL stub (`NoSandboxAvailable`). To call that Coinbase static sandbox host from `CBAdvancedTradeClient`, set `baseUrl: 'https://api-sandbox.coinbase.com'` explicitly.
+The [Advanced Trade static sandbox](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/sandbox) returns predefined mock responses for a limited set of account and order endpoints. It does not run a matching engine and is not a funded trading environment. Enable it on `CBAdvancedTradeClient` with `useSandbox: true` (REST only). There is no Advanced Trade WebSocket sandbox.
 
-`useSandbox: true` is supported by `CBExchangeClient` and `CBInternationalClient`, and by the matching Exchange or International WebSocket connections. On `WebsocketClient`, `useSandbox` is client-wide: it applies to every `wsKey` on that instance. Sandbox credentials are separate from production credentials.
+`useSandbox: true` is also supported by `CBExchangeClient` and `CBInternationalClient`, and by the matching Exchange or International WebSocket connections. On `WebsocketClient`, `useSandbox` is client-wide: it applies to every `wsKey` on that instance. Do not set `useSandbox: true` on an Advanced Trade WebSocket connection. Sandbox credentials are separate from production credentials where the product requires them. Advanced Trade's static sandbox also accepts unauthenticated requests for its mocked endpoints.
 
-Do not set `useSandbox: true` on `CBAdvancedTradeClient` or an Advanced Trade WebSocket connection. Use public live data and `previewOrder()` for the safe Advanced Trade workflow in this tutorial.
+```javascript
+import { CBAdvancedTradeClient } from 'coinbase-api';
+
+const sandboxRest = new CBAdvancedTradeClient({
+  useSandbox: true,
+});
+```
+
+This tutorial's order examples still use live public market data plus `previewOrder()` for the safe Advanced Trade workflow.
 
 Official environment references:
 
@@ -1401,7 +1409,7 @@ Advanced Trade is the normal Coinbase trading API for retail users. Coinbase Exc
 
 ### Does Advanced Trade have a sandbox?
 
-Coinbase provides a static Advanced Trade sandbox with predefined mock responses for selected account and order endpoints. It does not run a matching engine. `CBAdvancedTradeClient` accepts `useSandbox`, but for Advanced Trade the SDK resolves it to an unavailable sandbox URL stub. Use an explicit `baseUrl: 'https://api-sandbox.coinbase.com'` only when you intentionally need that static sandbox host.
+Yes, a static REST sandbox. `useSandbox: true` on `CBAdvancedTradeClient` routes to `https://api-sandbox.coinbase.com`. Responses are predefined mocks for selected account and order endpoints. It does not run a matching engine, and there is no Advanced Trade WebSocket sandbox.
 
 ### Does `previewOrder()` place an order?
 
