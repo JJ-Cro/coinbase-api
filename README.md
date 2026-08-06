@@ -3,8 +3,8 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/coinbase-api">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/tiagosiebler/coinbase-api/blob/master/docs/images/logoDarkMode2.svg?raw=true#gh-dark-mode-only">
-      <img alt="SDK Logo" src="https://github.com/tiagosiebler/coinbase-api/blob/master/docs/images/logoBrightMode2.svg?raw=true#gh-light-mode-only">
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/sieblyio/coinbase-api/blob/master/docs/images/logoDarkMode2.svg?raw=true#gh-dark-mode-only">
+      <img alt="SDK Logo" src="https://github.com/sieblyio/coinbase-api/blob/master/docs/images/logoBrightMode2.svg?raw=true#gh-light-mode-only">
     </picture>
   </a>
 </p>
@@ -12,15 +12,15 @@
 [![npm version](https://img.shields.io/npm/v/coinbase-api)][1]
 [![npm size](https://img.shields.io/bundlephobia/min/coinbase-api/latest)][1]
 [![npm downloads](https://img.shields.io/npm/dt/coinbase-api)][1]
-[![Build & Test](https://github.com/tiagosiebler/coinbase-api/actions/workflows/e2etest.yml/badge.svg?branch=master)](https://github.com/tiagosiebler/coinbase-api/actions/workflows/e2etest.yml)
-[![last commit](https://img.shields.io/github/last-commit/tiagosiebler/coinbase-api)][1]
+[![Build & Test](https://github.com/sieblyio/coinbase-api/actions/workflows/e2etest.yml/badge.svg?branch=master)](https://github.com/sieblyio/coinbase-api/actions/workflows/e2etest.yml)
+[![last commit](https://img.shields.io/github/last-commit/sieblyio/coinbase-api)][1]
 [![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/nodetraders)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/tiagosiebler/coinbase-api)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sieblyio/coinbase-api)
 
 [1]: https://www.npmjs.com/package/coinbase-api
 
 > [!TIP]
-> Upcoming change: As part of the [Siebly.io](https://siebly.io/?ref=ghcoinbase) brand, this SDK will soon be hosted under the [Siebly.io GitHub organisation](https://github.com/sieblyio). The migration is seamless and requires no user changes.
+> Upcoming change: As part of the [Siebly.io](https://siebly.io/?ref=ghcoinbase) brand, this SDK is now hosted under our [Siebly.io GitHub organisation](https://github.com/sieblyio). The migration is seamless and requires no user changes.
 
 Updated & performant JavaScript & Node.js SDK for Coinbase's Advanced Trade, App, Exchange, International, Prime & Commerce REST APIs and WebSockets:
 
@@ -85,7 +85,7 @@ Refer to the [examples](./examples) folder for implementation examples.
 
 ## Issues & Discussion
 
-- Issues? Check the [issues tab](https://github.com/tiagosiebler/coinbase-api/issues).
+- Issues? Check the [issues tab](https://github.com/sieblyio/coinbase-api/issues).
 - Discuss & collaborate with other node devs? Join our [Node.js Algo Traders](https://t.me/nodetraders) engineering community on telegram.
 - Follow our announcement channel for real-time updates on [X/Twitter](https://x.com/sieblyio)
 
@@ -572,7 +572,7 @@ This file contains AI optimised structure of all the functions in this package, 
 
 ## Used By
 
-[![Repository Users Preview Image](https://dependents.info/tiagosiebler/coinbase-api/image)](https://github.com/tiagosiebler/coinbase-api/network/dependents)
+[![Repository Users Preview Image](https://dependents.info/sieblyio/coinbase-api/image)](https://github.com/sieblyio/coinbase-api/network/dependents)
 
 ---
 
@@ -612,6 +612,6 @@ Contributions are encouraged, I will review any incoming pull requests. See the 
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=tiagosiebler/bybit-api,tiagosiebler/okx-api,tiagosiebler/binance,tiagosiebler/bitget-api,tiagosiebler/bitmart-api,tiagosiebler/gateio-api,tiagosiebler/kucoin-api,tiagosiebler/coinbase-api,tiagosiebler/orderbooks,tiagosiebler/accountstate,tiagosiebler/awesome-crypto-examples&type=Date)](https://star-history.com/#tiagosiebler/bybit-api&tiagosiebler/okx-api&tiagosiebler/binance&tiagosiebler/bitget-api&tiagosiebler/bitmart-api&tiagosiebler/gateio-api&tiagosiebler/kucoin-api&tiagosiebler/coinbase-api&tiagosiebler/orderbooks&tiagosiebler/accountstate&tiagosiebler/awesome-crypto-examples&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=tiagosiebler/bybit-api,tiagosiebler/okx-api,tiagosiebler/binance,tiagosiebler/bitget-api,tiagosiebler/bitmart-api,tiagosiebler/gateio-api,tiagosiebler/kucoin-api,sieblyio/coinbase-api,tiagosiebler/orderbooks,tiagosiebler/accountstate,tiagosiebler/awesome-crypto-examples&type=Date)](https://star-history.com/#tiagosiebler/bybit-api&tiagosiebler/okx-api&tiagosiebler/binance&tiagosiebler/bitget-api&tiagosiebler/bitmart-api&tiagosiebler/gateio-api&tiagosiebler/kucoin-api&sieblyio/coinbase-api&tiagosiebler/orderbooks&tiagosiebler/accountstate&tiagosiebler/awesome-crypto-examples&Date)
 
 <!-- template_star_history_end -->

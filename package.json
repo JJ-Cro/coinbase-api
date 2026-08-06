@@ -83,10 +83,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tiagosiebler/coinbase-api.git"
+    "url": "git+https://github.com/sieblyio/coinbase-api.git"
   },
   "bugs": {
-    "url": "https://github.com/tiagosiebler/coinbase-api/issues"
+    "url": "https://github.com/sieblyio/coinbase-api/issues"
   },
-  "homepage": "https://github.com/tiagosiebler/coinbase-api#readme"
+  "homepage": "https://github.com/sieblyio/coinbase-api#readme"
 }
