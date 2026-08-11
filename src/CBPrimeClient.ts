@@ -38,6 +38,7 @@ import {
   GetPrimePortfolioUsersRequest,
   GetPrimePortfolioWalletsRequest,
   GetPrimePortfolioWithdrawalPowerRequest,
+  GetPrimeTransactionTravelRuleDataRequest,
   GetPrimeUsersRequest,
   GetPrimeWalletDepositInstructionsRequest,
   GetPrimeWalletTransactionsRequest,
@@ -749,6 +750,26 @@ export class CBPrimeClient extends BaseRestClient {
     const { portfolio_id, transaction_id } = params;
     return this.getPrivate(
       `/v1/portfolios/${portfolio_id}/transactions/${transaction_id}`,
+    );
+  }
+
+  /**
+   *
+   * Travel Rule Endpoints
+   *
+   */
+
+  /**
+   * Get Transaction Travel Rule Data
+   *
+   * (Beta) Get fulfilled travel rule data for a transaction.
+   */
+  getTransactionTravelRuleData(
+    params: GetPrimeTransactionTravelRuleDataRequest,
+  ): Promise<any> {
+    const { portfolio_id, transaction_id } = params;
+    return this.getPrivate(
+      `/v1/portfolios/${portfolio_id}/transactions/${transaction_id}/travel_rule`,
     );
   }
 

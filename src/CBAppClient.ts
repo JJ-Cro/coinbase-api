@@ -16,6 +16,7 @@ import {
 import {
   CBAppAccount,
   CBAppAddress,
+  CBAppCoinbaseOneSubscription,
   CBAppCryptocurrency,
   CBAppDepositWithdrawal,
   CBAppFiatCurrency,
@@ -406,6 +407,24 @@ export class CBAppClient extends BaseRestClient {
     return this.getPrivate(
       `/v2/accounts/${params.account_id}/withdrawals/${params.withdrawal_id}`,
     );
+  }
+
+  /**
+   *
+   * Subscriptions Endpoints
+   *
+   */
+
+  /**
+   * Get Coinbase One Subscription
+   *
+   * Returns a user's Coinbase One subscription status, tier, and current period end.
+   * Requires OAuth2 scope: wallet:subscription:read
+   */
+  getCoinbaseOneSubscription(): Promise<{
+    data: CBAppCoinbaseOneSubscription;
+  }> {
+    return this.getPrivate('/v2/subscriptions/coinbase-one');
   }
 
   /**

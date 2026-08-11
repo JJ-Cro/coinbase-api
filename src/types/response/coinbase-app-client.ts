@@ -247,6 +247,18 @@ export interface CBAppTransfer {
 }
 /**
  *
+ * Subscriptions Endpoints
+ *
+ */
+
+export interface CBAppCoinbaseOneSubscription {
+  status: string;
+  tier: string;
+  current_period_end: string;
+}
+
+/**
+ *
  * DATA - Currencies Endpoints
  *
  */
