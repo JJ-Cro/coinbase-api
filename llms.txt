@@ -7671,6 +7671,11 @@ getWrappedAssetConversionRate(params: {
 }): Promise<any>
 
 ================
+File: .nvmrc
+================
+v24.18.0
+
+================
 File: LICENSE.md
 ================
 Copyright 2025 Tiago Siebler
@@ -8897,11 +8902,6 @@ function generateConfig(name)
 // The REST client's https.Agent (for keepAlive) is Node.js-only and won't work in browsers
 ⋮----
 // Code is already transpiled from TypeScript, no additional loaders needed
-
-================
-File: .nvmrc
-================
-v24.18.0
 
 ================
 File: src/lib/BaseRestClient.ts
