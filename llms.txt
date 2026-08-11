@@ -1450,309 +1450,6 @@ export interface CBAppWithdrawFundsRequest {
  */
 
 ================
-File: src/types/response/coinbase-app-client.ts
-================
-export interface CBAppPagination {
-  ending_before?: string | null;
-  starting_after?: string | null;
-  limit?: number;
-  order?: string;
-  previous_uri: string | null;
-  next_uri: string | null;
-}
-⋮----
-/**
- *
- * Account Endpoints
- *
- */
-⋮----
-interface AccountCurrency {
-  address_regex: string;
-  asset_id: string;
-  code: string;
-  color: string;
-  exponent: number;
-  name: string;
-  slug: string;
-  sort_index: number;
-  type: string;
-}
-⋮----
-interface AccountBalance {
-  amount: string;
-  currency: string;
-}
-⋮----
-export interface CBAppAccount {
-  id: string;
-  name: string;
-  primary: boolean;
-  type: string;
-  currency: AccountCurrency;
-  balance: AccountBalance;
-  created_at: string;
-  updated_at: string;
-  resource: string;
-  resource_path: string;
-  ready: boolean;
-}
-⋮----
-/**
- *
- * Address Endpoints
- *
- */
-⋮----
-export interface CBAppAddress {
-  id: string;
-  address: string;
-  name?: string;
-  network: string;
-  created_at: string;
-  updated_at: string;
-  resource: string;
-  resource_path: string;
-}
-⋮----
-/**
- *
- * Transactions Endpoints
- *
- */
-⋮----
-interface TransactionAmount {
-  amount: string;
-  currency: string;
-}
-⋮----
-interface TransactionNetwork {
-  status: string;
-  name: string;
-  hash?: string;
-  transaction_fee?: TransactionAmount;
-  transaction_amount?: TransactionAmount;
-  network_name?: string;
-  status_description?: string | null;
-}
-⋮----
-interface TransactionFrom {
-  id: string;
-  resource: string;
-  resource_path?: string;
-}
-⋮----
-interface TransactionTo {
-  resource: string;
-  address?: string;
-  email?: string;
-  id?: string;
-  resource_path?: string;
-}
-⋮----
-interface TransactionDetails {
-  title: string;
-  subtitle: string;
-  header?: string;
-  health?: string;
-  subsidebar_label?: string | null;
-}
-⋮----
-interface AdvancedTradeFill {
-  fill_price: string;
-  product_id: string;
-  order_id: string;
-  commission: string;
-  order_side: 'BUY' | 'SELL';
-}
-⋮----
-export interface CBAppTransaction {
-  id: string;
-  type: string;
-  status: string;
-  amount: TransactionAmount;
-  native_amount: TransactionAmount;
-  description: string | null;
-  created_at: string;
-  updated_at: string;
-  resource: string;
-  resource_path: string;
-  network?: TransactionNetwork;
-  from?: TransactionFrom;
-  to?: TransactionTo;
-  details?: TransactionDetails;
-  instant_exchange?: boolean;
-  advanced_trade_fill?: AdvancedTradeFill;
-  cancelable?: boolean;
-  idem?: string;
-}
-⋮----
-/**
- *
- * Deposits/Withdrawal Endpoints
- *
- */
-⋮----
-interface DepositWithdrawalPaymentMethod {
-  id: string;
-  resource: string;
-  resource_path: string;
-}
-⋮----
-interface DepositWithdrawalTransaction {
-  id: string;
-  resource: string;
-  resource_path: string;
-}
-⋮----
-interface DepositWithdrawalAmountCurrency {
-  amount: string;
-  currency: string;
-}
-⋮----
-export interface CBAppDepositWithdrawal {
-  id: string;
-  status: string;
-  payment_method: DepositWithdrawalPaymentMethod;
-  transaction: DepositWithdrawalTransaction;
-  amount: DepositWithdrawalAmountCurrency;
-  subtotal: DepositWithdrawalAmountCurrency;
-  created_at: string;
-  updated_at: string;
-  resource: string;
-  resource_path: string;
-  committed: boolean;
-  fee: DepositWithdrawalAmountCurrency;
-  payout_at: string;
-}
-⋮----
-interface TransferAmount {
-  value: string;
-  currency: string;
-}
-⋮----
-interface TransferOwner {
-  id: string;
-  uuid: string;
-  user_uuid: string;
-  type: string;
-}
-⋮----
-interface TransferLedgerAccount {
-  account_id: string;
-  currency: string;
-  owner: TransferOwner;
-}
-⋮----
-interface TransferExternalPaymentMethod {
-  payment_method_id: string;
-}
-⋮----
-interface TransferSource {
-  type: string;
-  network: string;
-  payment_method_id: string;
-  external_payment_method: TransferExternalPaymentMethod;
-}
-⋮----
-interface TransferTarget {
-  type: string;
-  network: string;
-  payment_method_id: string;
-  ledger_account: TransferLedgerAccount;
-}
-⋮----
-interface TransferFee {
-  title: string;
-  description: string;
-  amount: TransferAmount;
-  type: string;
-}
-⋮----
-export interface CBAppTransferDepositWithdrawal {
-  user_entered_amount: TransferAmount;
-  amount: TransferAmount;
-  total: TransferAmount;
-  subtotal: TransferAmount;
-  idem: string;
-  committed: boolean;
-  id: string;
-  instant: boolean;
-  source: TransferSource;
-  target: TransferTarget;
-  payout_at: string;
-  status: string;
-  user_reference: string;
-  type: string;
-  created_at: string | null;
-  updated_at: string | null;
-  user_warnings: any[];
-  fees: any[];
-  total_fee: TransferFee;
-  cancellation_reason: string | null;
-  hold_days: number;
-  nextStep: any | null;
-  checkout_url: string;
-  requires_completion_step: boolean;
-}
-⋮----
-export interface CBAppTransfer {
-  transfer: CBAppTransferDepositWithdrawal;
-}
-/**
- *
- * Subscriptions Endpoints
- *
- */
-⋮----
-export interface CBAppCoinbaseOneSubscription {
-  status: string;
-  tier: string;
-  current_period_end: string;
-}
-⋮----
-/**
- *
- * DATA - Currencies Endpoints
- *
- */
-⋮----
-export interface CBAppFiatCurrency {
-  id: string;
-  name: string;
-  min_size: string;
-}
-⋮----
-export interface CBAppCryptocurrency {
-  code: string;
-  name: string;
-  color: string;
-  sort_index: number;
-  exponent: number;
-  type: string;
-  address_regex: string;
-  asset_id: string;
-}
-⋮----
-/**
- *
- * DATA- Exchange rates Endpoints
- *
- */
-⋮----
-/**
- *
- * DATA - Prices Endpoints
- *
- */
-⋮----
-/**
- *
- * DATA - Time Endpoints
- *
- */
-
-================
 File: src/types/response/coinbase-international.ts
 ================
 /**
@@ -1883,60 +1580,6 @@ File: src/types/response/coinbase-prime.ts
  * Transactions Endpoints
  *
  */
-⋮----
-/**
- *
- * Travel Rule Endpoints
- *
- */
-⋮----
-export interface PrimeTravelRuleDetailedAddress {
-  address_1?: string;
-  address_2?: string;
-  address_3?: string;
-  city?: string;
-  state?: string;
-  country_code?: string;
-  postal_code?: string;
-}
-⋮----
-export interface PrimeTravelRuleNaturalPersonName {
-  first_name?: string;
-  middle_name?: string;
-  last_name?: string;
-}
-⋮----
-export interface PrimeTravelRuleParty {
-  name?: string;
-  natural_person_name?: PrimeTravelRuleNaturalPersonName;
-  address?: PrimeTravelRuleDetailedAddress;
-  wallet_type?:
-    | 'TRAVEL_RULE_WALLET_TYPE_VASP'
-    | 'TRAVEL_RULE_WALLET_TYPE_SELF_CUSTODIED';
-  vasp_id?: string;
-  vasp_name?: string;
-  personal_id?: string;
-  date_of_birth?: {
-    year?: number;
-    month?: number;
-    day?: number;
-  };
-  telephone_number?: string;
-  account_id?: string;
-  vasp_address?: PrimeTravelRuleDetailedAddress;
-}
-⋮----
-export interface GetPrimeTransactionTravelRuleDataResponse {
-  fulfilled: boolean;
-  is_self?: boolean;
-  originator?: PrimeTravelRuleParty;
-  beneficiary?: PrimeTravelRuleParty;
-  amount?: string;
-  amount_currency?: string;
-  fiat_amount?: string;
-  fiat_amount_currency?: string;
-  blockchain_network?: string;
-}
 ⋮----
 /**
  *
@@ -2118,359 +1761,6 @@ export interface WsAPITopicRequestParamMap {
 export interface WsAPITopicResponseMap {
   [k: string]: never;
 }
-
-================
-File: src/CBAppClient.ts
-================
-import { AxiosRequestConfig } from 'axios';
-⋮----
-import { BaseRestClient } from './lib/BaseRestClient.js';
-import {
-  getParamsFromURL,
-  REST_CLIENT_TYPE_ENUM,
-  RestClientOptions,
-  RestClientType,
-} from './lib/requestUtils.js';
-import {
-  CBAppDepositFundsRequest,
-  CBAppSendMoneyRequest,
-  CBAppTransferMoneyRequest,
-  CBAppWithdrawFundsRequest,
-} from './types/request/coinbase-app-client.js';
-import {
-  CBAppAccount,
-  CBAppAddress,
-  CBAppCoinbaseOneSubscription,
-  CBAppCryptocurrency,
-  CBAppDepositWithdrawal,
-  CBAppFiatCurrency,
-  CBAppPagination,
-  CBAppTransaction,
-  CBAppTransfer,
-} from './types/response/coinbase-app-client.js';
-⋮----
-/**
- * REST client for Coinbase's Coinbase App API:
- * https://docs.cdp.coinbase.com/coinbase-app/docs/welcome
- */
-export class CBAppClient extends BaseRestClient
-⋮----
-constructor(
-    restClientOptions: RestClientOptions = {},
-    requestOptions: AxiosRequestConfig = {},
-)
-⋮----
-// Some endpoints return a warning if a version header isn't included: https://docs.cdp.coinbase.com/coinbase-app/docs/versioning
-// Currently set to a date from the changelog: https://docs.cdp.coinbase.com/coinbase-app/docs/changelog
-⋮----
-getClientType(): RestClientType
-⋮----
-/**
-   *
-   * Account Endpoints
-   *
-   */
-⋮----
-/**
-   * List Accounts
-   *
-   * List a current user's accounts to which the authentication method has access to.
-   *
-   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
-   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of accounts.
-   */
-getAccounts(params?: {
-    paginationURL?: string;
-    starting_after?: string;
-}): Promise<
-⋮----
-/**
-   * Show Account
-   *
-   * Get a current user's account by account ID or currency string.
-   */
-getAccount(params:
-⋮----
-/**
-   *
-   * Address Endpoints
-   *
-   */
-⋮----
-/**
-   * Create Address
-   *
-   * Creates a new address for an account. Addresses can be created for wallet account types.
-   */
-createAddress(params:
-⋮----
-/**
-   * List Addresses
-   *
-   * Lists addresses for an account.
-   *
-   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
-   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of addresses.
-   */
-getAddresses(params: {
-    account_id: string;
-    paginationURL?: string;
-}): Promise<
-⋮----
-/**
-   * Show Address
-   *
-   * Get an single address for an account.
-   * A regular cryptocurrency address can be used in place of address_id but the address must be associated with the correct account.
-   *
-   * !! An address can only be associated with one account. See Create Address to create new addresses.
-   */
-getAddress(params:
-⋮----
-/**
-   * List Address Transactions
-   *
-   * List transactions that have been sent to a specific address.
-   * A regular cryptocurrency address can be used in place of address_id but the address must be associated with the correct account.
-   *
-   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
-   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of transactions.
-   */
-getAddressTransactions(params: {
-    account_id: string;
-    addressId: string;
-    paginationURL?: string;
-}): Promise<
-⋮----
-/**
-   *
-   * Transactions Endpoints
-   *
-   */
-⋮----
-/**
-   * Send Money
-   *
-   * Send funds to a network address for any Coinbase supported asset, or email address of the recipient.
-   * No transaction fees are required for off-blockchain cryptocurrency transactions.
-   *
-   * TRAVEL RULE DATA GUIDE: https://docs.cdp.coinbase.com/coinbase-app/docs/coinbase-app-travel-rule
-   */
-sendMoney(
-    params: CBAppSendMoneyRequest,
-): Promise<
-⋮----
-/**
-   * Transfer Money
-   *
-   * Transfer any Coinbase supported digital asset between two of a single user's accounts.
-   * Accounts must support the same currency for transfers to be successful.
-   */
-transferMoney(
-    params: CBAppTransferMoneyRequest,
-): Promise<
-⋮----
-/**
-   * List Transactions
-   *
-   * Lists the transactions of an account by account ID.
-   *
-   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
-   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of transactions.
-   */
-getTransactions(params: {
-    account_id: string;
-    paginationURL?: string;
-}): Promise<
-⋮----
-/**
-   * Show Transaction
-   *
-   * Get a single transaction for an account.
-   */
-getTransaction(params: {
-    account_id: string;
-    transactionId: string;
-}): Promise<
-⋮----
-/**
-   *
-   * Deposits Endpoints
-   *
-   */
-⋮----
-/**
-   * Deposit Funds
-   *
-   * Deposits user-defined amount of funds to a fiat account.
-   */
-depositFunds(params: CBAppDepositFundsRequest): Promise<CBAppTransfer>
-⋮----
-/**
-   * Commit Deposit
-   *
-   * Completes a deposit that is created in commit: false state.
-   */
-commitDeposit(params: {
-    account_id: string;
-    deposit_id: string;
-}): Promise<CBAppTransfer>
-⋮----
-/**
-   * List Deposits
-   *
-   * Lists fiat deposits for an account.
-   *
-   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
-   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of deposits.
-   */
-getDeposits(params:
-⋮----
-/**
-   * Show Deposit
-   *
-   * Get one deposit by deposit Id.
-   */
-getDeposit(params:
-⋮----
-/**
-   *
-   * Withdrawals Endpoints
-   *
-   */
-⋮----
-/**
-   * Withdraw Funds
-   *
-   * Withdraws a user-defined amount of funds from a fiat account.
-   */
-withdrawFunds(params: CBAppWithdrawFundsRequest): Promise<CBAppTransfer>
-⋮----
-/**
-   * Commit Withdrawal
-   *
-   * Completes a withdrawal that is created in commit: false state.
-   */
-commitWithdrawal(params: {
-    account_id: string;
-    withdrawal_id: string;
-}): Promise<CBAppTransfer>
-⋮----
-/**
-   * List Withdrawals
-   *
-   * Lists withdrawals for an account.
-   *
-   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
-   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of withdrawals.
-   */
-getWithdrawals(params: {
-    account_id: string;
-    paginationURL?: string;
-}): Promise<
-⋮----
-/**
-   * Show Withdrawal
-   *
-   * Get a single withdrawal.
-   */
-getWithdrawal(params: {
-    account_id: string;
-    withdrawal_id: string;
-}): Promise<
-⋮----
-/**
-   *
-   * Subscriptions Endpoints
-   *
-   */
-⋮----
-/**
-   * Get Coinbase One Subscription
-   *
-   * Returns a user's Coinbase One subscription status, tier, and current period end.
-   * Requires OAuth2 scope: wallet:subscription:read
-   */
-getCoinbaseOneSubscription(): Promise<
-⋮----
-/**
-   *
-   * DATA - Currencies Endpoints
-   *
-   */
-⋮----
-/**
-   * Get Fiat Currencies
-   *
-   * Lists known fiat currencies. Currency codes conform to the ISO 4217 standard where possible.
-   * Currencies with no representation in ISO 4217 may use a custom code.
-   */
-getFiatCurrencies(): Promise<
-⋮----
-/**
-   * Get Cryptocurrencies
-   *
-   * Lists known cryptocurrencies.
-   */
-getCryptocurrencies(): Promise<CBAppCryptocurrency[]>
-⋮----
-/**
-   *
-   * DATA- Exchange rates Endpoints
-   *
-   */
-⋮----
-/**
-   * Get Exchange Rates
-   *
-   * Get current exchange rates. Default base currency is USD but it can be defined as any supported currency.
-   * Returned rates will define the exchange rate for one unit of the base currency.
-   */
-getExchangeRates(params?:
-⋮----
-/**
-   *
-   * DATA - Prices Endpoints
-   *
-   */
-⋮----
-/**
-   * Get Buy Price
-   *
-   * Get the total price to buy one bitcoin or ether.
-   * This endpoint doesn't require authentication.
-   */
-getBuyPrice(params:
-⋮----
-/**
-   * Get Sell Price
-   *
-   * Get the total price to sell one bitcoin or ether.
-   * This endpoint doesn't require authentication.
-   */
-getSellPrice(params:
-⋮----
-/**
-   * Get Spot Price
-   *
-   * Get the current market price for bitcoin. This is usually somewhere in between the buy and sell price.
-   * This endpoint doesn't require authentication.
-   */
-getSpotPrice(params:
-⋮----
-/**
-   *
-   * DATA - Time Endpoints
-   *
-   */
-⋮----
-/**
-   * Get Current Time
-   *
-   * Get the API server time.
-   * This endpoint doesn't require authentication.
-   */
-getCurrentTime(): Promise<
 
 ================
 File: src/CBCommerceClient.ts
@@ -5221,526 +4511,6 @@ export interface INTXWithdrawToCounterpartyIdRequest {
  */
 
 ================
-File: src/types/request/coinbase-prime.ts
-================
-/**
- *
- * Allocation Endpoints
- *
- */
-⋮----
-export interface CreatePrimePortfolioAllocationsRequest {
-  allocation_id?: string;
-  source_portfolio_id?: string;
-  product_id?: string;
-  order_ids?: string[];
-  allocation_legs: {
-    allocation_leg_id: string;
-    destination_portfolio_id: string;
-    amount: string;
-  }[];
-  size_type?: 'BASE' | 'QUOTE' | 'PERCENT';
-  remainder_destination_portfolio?: string;
-}
-⋮----
-export interface CreatePrimePortfolioNetAllocationsRequest {
-  netting_id?: string;
-  source_portfolio_id?: string;
-  product_id?: string;
-  order_ids?: string[];
-  allocation_legs: {
-    allocation_leg_id: string;
-    destination_portfolio_id: string;
-    amount: string;
-  }[];
-  size_type?: 'BASE' | 'QUOTE' | 'PERCENT';
-  remainder_destination_portfolio?: string;
-}
-⋮----
-export interface GetPrimePortfolioAllocationsRequest {
-  portfolio_id: string;
-  product_ids?: string[];
-  order_side?: 'BUY' | 'SELL';
-  start_date?: string;
-  end_date?: string;
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'DESC' | 'ASC';
-}
-/**
- *
- * Invoice Endpoints
- *
- */
-⋮----
-export interface GetPrimeInvoicesRequest {
-  entity_id: string;
-  states?: string[];
-  billing_year?: number;
-  billing_month?: number;
-  cursor?: number;
-  limit?: number;
-}
-/**
- *
- * Assets Endpoints
- *
- */
-⋮----
-/**
- *
- * Payment Methods Endpoints
- *
- */
-⋮----
-/**
- *
- * Users Endpoints
- *
- */
-⋮----
-export interface GetPrimeUsersRequest {
-  entity_id: string;
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'ASC' | 'DESC';
-}
-⋮----
-export interface GetPrimePortfolioUsersRequest {
-  portfolio_id: string;
-  cursor?: string;
-  limit?: number;
-  sort_direction?: string;
-}
-/**
- *
- * Portfolios Endpoints
- *
- */
-⋮----
-/**
- *
- * Activities Endpoints
- *
- */
-⋮----
-export interface GetPrimeActivitiesRequest {
-  portfolio_id: string;
-  symbols?: string[];
-  categories?: string[];
-  statuses?: string[];
-  start_time?: string;
-  end_time?: string;
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'ASC' | 'DESC';
-}
-⋮----
-export interface GetPrimeEntityActivitiesRequest {
-  entity_id: string;
-  activity_level?: 'ACTIVITY_LEVEL_ALL';
-  symbols?: string[];
-  categories?: string[];
-  statuses?: string[];
-  start_time?: string;
-  end_time?: string;
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'ASC' | 'DESC';
-}
-⋮----
-export interface GetPrimePortfolioActivityByIdRequest {
-  portfolio_id: string;
-  activity_id: string;
-}
-/**
- *
- * Address Book Endpoints
- *
- */
-⋮----
-export interface GetPrimeAddressBookRequest {
-  portfolio_id: string;
-  currency_symbol?: string;
-  search?: string;
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'DESC' | 'ASC';
-}
-⋮----
-export interface CreatePrimeAddressBookEntryRequest {
-  portfolio_id: string;
-  address: string;
-  currency_symbol: string;
-  name: string;
-  account_identifier?: string;
-}
-/**
- *
- * Balances Endpoints
- *
- */
-⋮----
-export interface GetPrimeWeb3WalletBalancesRequest {
-  portfolio_id: string;
-  wallet_id: string;
-  visibility_statuses?: string[];
-  cursor?: string;
-  limit?: number;
-}
-⋮----
-/**
- *
- * Commission Endpoints
- *
- */
-⋮----
-/**
- *
- * Orders Endpoints
- *
- */
-⋮----
-export interface GetPrimePortfolioFillsRequest {
-  portfolio_id: string;
-  start_date: string;
-  end_date?: string;
-  limit?: number;
-  cursor?: string;
-  sort_direction?: 'DESC' | 'ASC';
-}
-⋮----
-export interface GetPrimeOpenOrdersRequest {
-  portfolio_id: string;
-  product_ids?: string[];
-  order_type?:
-    | 'MARKET'
-    | 'LIMIT'
-    | 'TWAP'
-    | 'BLOCK'
-    | 'VWAP'
-    | 'STOP_LIMIT'
-    | 'PEG';
-  sort_direction?: 'DESC' | 'ASC';
-  start_date: string;
-  order_side?: 'BUY' | 'SELL';
-  end_date?: string;
-}
-⋮----
-export interface SubmitPrimeOrderRequest {
-  portfolio_id: string;
-  product_id: string;
-  side: 'BUY' | 'SELL';
-  client_order_id?: string;
-  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'VWAP' | 'STOP_LIMIT' | 'PEG';
-  base_quantity?: string;
-  quote_value?: string;
-  limit_price?: string;
-  stop_price?: string;
-  start_time?: string;
-  expiry_time?: string;
-  time_in_force?:
-    | 'FILL_OR_KILL'
-    | 'GOOD_UNTIL_DATE_TIME'
-    | 'GOOD_UNTIL_CANCELLED'
-    | 'IMMEDIATE_OR_CANCEL';
-  stp_id?: string;
-  display_quote_size?: string;
-  display_base_size?: string;
-  is_raise_exact?: boolean;
-  historical_pov?: string;
-  peg_offset_type?:
-    | 'PEG_OFFSET_TYPE_PRICE'
-    | 'PEG_OFFSET_TYPE_BPS'
-    | 'PEG_OFFSET_TYPE_BASIS_POINTS'
-    | 'PEG_OFFSET_TYPE_DEPTH'
-    | 'PEG_OFFSET_TYPE_CUMULATIVE_DEPTH_IN_BASE_UNITS';
-  offset?: string;
-  wig_level?: string;
-}
-⋮----
-export interface EditPrimeOrderRequest {
-  portfolio_id: string;
-  order_id: string;
-  orig_client_order_id: string;
-  client_order_id: string;
-  product_id?: string;
-  base_quantity?: string;
-  quote_value?: string;
-  limit_price?: string;
-  expiry_time?: string;
-  display_quote_size?: string;
-  display_base_size?: string;
-  stop_price?: string;
-  offset?: string;
-  wig_level?: string;
-}
-⋮----
-export interface RotatePrimeApiKeyRequest {
-  api_key_id?: string;
-}
-⋮----
-export interface GetPrimeOrderPreviewRequest {
-  portfolio_id: string;
-  product_id: string;
-  side: 'BUY' | 'SELL';
-  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT' | 'PEG';
-  base_quantity?: string;
-  quote_value?: string;
-  limit_price?: string;
-  stop_price?: string;
-  start_time?: string;
-  expiry_time?: string;
-  time_in_force?:
-    | 'FILL_OR_KILL'
-    | 'GOOD_UNTIL_DATE_TIME'
-    | 'GOOD_UNTIL_CANCELLED'
-    | 'IMMEDIATE_OR_CANCEL';
-  is_raise_exact?: boolean;
-  historical_pov?: string;
-  peg_offset_type?:
-    | 'PEG_OFFSET_TYPE_PRICE'
-    | 'PEG_OFFSET_TYPE_BPS'
-    | 'PEG_OFFSET_TYPE_BASIS_POINTS'
-    | 'PEG_OFFSET_TYPE_DEPTH'
-    | 'PEG_OFFSET_TYPE_CUMULATIVE_DEPTH_IN_BASE_UNITS';
-  offset?: string;
-  wig_level?: string;
-}
-⋮----
-export interface GetPrimePortfolioOrdersRequest {
-  portfolio_id: string;
-  order_statuses?: (
-    | 'FILLED'
-    | 'CANCELLED'
-    | 'EXPIRED'
-    | 'FAILED'
-    | 'PENDING'
-  )[];
-  product_ids?: string[];
-  order_type?:
-    | 'MARKET'
-    | 'LIMIT'
-    | 'TWAP'
-    | 'BLOCK'
-    | 'VWAP'
-    | 'STOP_LIMIT'
-    | 'PEG';
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'DESC' | 'ASC';
-  order_side?: 'BUY' | 'SELL';
-  start_date?: string;
-  end_date?: string;
-}
-⋮----
-export interface GetPrimeOrderFillsRequest {
-  portfolio_id: string;
-  order_id: string;
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'DESC' | 'ASC';
-}
-/**
- *
- * Products Endpoints
- *
- */
-⋮----
-export interface GetPrimePortfolioProductsRequest {
-  portfolio_id: string;
-  cursor?: string;
-  /** Must be between 0 and 1000 (defaults to 10 when unset). Values > 1000 are rejected. */
-  limit?: number;
-  sort_direction?: 'DESC' | 'ASC';
-  /** If unset, returns all product types available for the portfolio (including FUTURE). */
-  product_type?: 'SPOT' | 'FUTURE' | 'OPTION';
-  /** Only applicable when product_type = FUTURE. */
-  contract_expiry_type?:
-    | 'CONTRACT_EXPIRY_TYPE_EXPIRING'
-    | 'CONTRACT_EXPIRY_TYPE_PERPETUAL';
-  /** Filter by expiry status for expiring futures. */
-  expiring_contract_status?:
-    | 'EXPIRING_CONTRACT_STATUS_UNEXPIRED'
-    | 'EXPIRING_CONTRACT_STATUS_EXPIRED'
-    | 'EXPIRING_CONTRACT_STATUS_ALL';
-}
-⋮----
-/** Must be between 0 and 1000 (defaults to 10 when unset). Values > 1000 are rejected. */
-⋮----
-/** If unset, returns all product types available for the portfolio (including FUTURE). */
-⋮----
-/** Only applicable when product_type = FUTURE. */
-⋮----
-/** Filter by expiry status for expiring futures. */
-⋮----
-/**
- *
- * Travel Rule Endpoints
- *
- */
-⋮----
-export interface GetPrimeTransactionTravelRuleDataRequest {
-  portfolio_id: string;
-  transaction_id: string;
-}
-⋮----
-/**
- *
- * Transactions Endpoints
- *
- */
-⋮----
-export interface GetPrimePortfolioTransactionsRequest {
-  portfolio_id: string;
-  symbols?: string[];
-  types?: string[];
-  start_time?: string;
-  end_time?: string;
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'DESC' | 'ASC';
-}
-⋮----
-export interface CreatePrimeConversionRequest {
-  portfolio_id: string;
-  wallet_id: string;
-  amount: string;
-  destination: string;
-  idempotency_key: string;
-  source_symbol: string;
-  destination_symbol: string;
-}
-⋮----
-export interface GetPrimeWalletTransactionsRequest {
-  portfolio_id: string;
-  wallet_id: string;
-  types?: string[];
-  start_time?: string;
-  end_time?: string;
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'DESC' | 'ASC';
-}
-⋮----
-export interface CreatePrimeTransferRequest {
-  portfolio_id: string;
-  wallet_id: string;
-  amount: string;
-  destination: string;
-  idempotency_key: string;
-  currency_symbol: string;
-}
-⋮----
-export interface CreatePrimeWithdrawalRequest {
-  portfolio_id: string;
-  wallet_id: string;
-  amount: string;
-  destination_type: 'DESTINATION_PAYMENT_METHOD' | 'DESTINATION_BLOCKCHAIN';
-  idempotency_key: string;
-  currency_symbol: string;
-  payment_method?: {
-    payment_method_id: string;
-  };
-  blockchain_address?: {
-    address: string;
-    account_identifier?: string;
-  };
-}
-/**
- *
- * Wallets Endpoints
- *
- */
-⋮----
-export interface GetPrimePortfolioWalletsRequest {
-  portfolio_id: string;
-  type: 'VAULT' | 'TRADING' | 'WALLET_TYPE_OTHER' | 'WEB3';
-  cursor?: string;
-  limit?: number;
-  sort_direction?: 'DESC' | 'ASC';
-  symbols?: string[];
-}
-⋮----
-export interface CreatePrimeWalletRequest {
-  portfolio_id: string;
-  name: string;
-  symbol: string;
-  wallet_type: 'VAULT' | 'TRADING' | 'WALLET_TYPE_OTHER' | 'WEB3';
-}
-⋮----
-export interface GetPrimeWalletDepositInstructionsRequest {
-  portfolio_id: string;
-  wallet_id: string;
-  deposit_type?:
-    | 'UNKNOWN_WALLET_DEPOSIT_TYPE'
-    | 'CRYPTO'
-    | 'WIRE'
-    | 'SEN'
-    | 'SWIFT';
-}
-⋮----
-/**
- *
- * Financing Endpoints
- *
- */
-⋮----
-export interface GetPrimeEntityAccrualsRequest {
-  entity_id: string;
-  portfolio_id?: string;
-  start_date?: string;
-  end_date?: string;
-}
-⋮----
-export interface GetPrimeEntityLocateAvailabilitiesRequest {
-  entity_id: string;
-  conversion_date?: string;
-  locate_date?: string;
-}
-⋮----
-export interface GetPrimeEntityMarginSummariesRequest {
-  entity_id: string;
-  start_date?: string;
-  end_date?: string;
-}
-⋮----
-export interface GetPrimeEntityTFTieredFeesRequest {
-  entity_id: string;
-  effective_at?: string;
-}
-⋮----
-export interface GetPrimePortfolioAccrualsRequest {
-  portfolio_id: string;
-  start_date?: string;
-  end_date?: string;
-}
-⋮----
-export interface GetPrimePortfolioBuyingPowerRequest {
-  portfolio_id: string;
-  base_currency: string;
-  quote_currency: string;
-}
-⋮----
-export interface GetPrimePortfolioLocatesRequest {
-  portfolio_id: string;
-  locate_ids?: string[];
-  conversion_date?: string;
-  locate_date?: string;
-}
-⋮----
-export interface GetPrimePortfolioMarginConversionsRequest {
-  portfolio_id: string;
-  start_date?: string;
-  end_date?: string;
-}
-⋮----
-export interface GetPrimePortfolioWithdrawalPowerRequest {
-  portfolio_id: string;
-  symbol: string;
-}
-
-================
 File: src/types/response/advanced-trade-client.ts
 ================
 /**
@@ -6596,6 +5366,309 @@ export interface AdvTradeApiKeyPermissions {
   portfolio_uuid: string;
   portfolio_type: string;
 }
+
+================
+File: src/types/response/coinbase-app-client.ts
+================
+export interface CBAppPagination {
+  ending_before?: string | null;
+  starting_after?: string | null;
+  limit?: number;
+  order?: string;
+  previous_uri: string | null;
+  next_uri: string | null;
+}
+⋮----
+/**
+ *
+ * Account Endpoints
+ *
+ */
+⋮----
+interface AccountCurrency {
+  address_regex: string;
+  asset_id: string;
+  code: string;
+  color: string;
+  exponent: number;
+  name: string;
+  slug: string;
+  sort_index: number;
+  type: string;
+}
+⋮----
+interface AccountBalance {
+  amount: string;
+  currency: string;
+}
+⋮----
+export interface CBAppAccount {
+  id: string;
+  name: string;
+  primary: boolean;
+  type: string;
+  currency: AccountCurrency;
+  balance: AccountBalance;
+  created_at: string;
+  updated_at: string;
+  resource: string;
+  resource_path: string;
+  ready: boolean;
+}
+⋮----
+/**
+ *
+ * Address Endpoints
+ *
+ */
+⋮----
+export interface CBAppAddress {
+  id: string;
+  address: string;
+  name?: string;
+  network: string;
+  created_at: string;
+  updated_at: string;
+  resource: string;
+  resource_path: string;
+}
+⋮----
+/**
+ *
+ * Transactions Endpoints
+ *
+ */
+⋮----
+interface TransactionAmount {
+  amount: string;
+  currency: string;
+}
+⋮----
+interface TransactionNetwork {
+  status: string;
+  name: string;
+  hash?: string;
+  transaction_fee?: TransactionAmount;
+  transaction_amount?: TransactionAmount;
+  network_name?: string;
+  status_description?: string | null;
+}
+⋮----
+interface TransactionFrom {
+  id: string;
+  resource: string;
+  resource_path?: string;
+}
+⋮----
+interface TransactionTo {
+  resource: string;
+  address?: string;
+  email?: string;
+  id?: string;
+  resource_path?: string;
+}
+⋮----
+interface TransactionDetails {
+  title: string;
+  subtitle: string;
+  header?: string;
+  health?: string;
+  subsidebar_label?: string | null;
+}
+⋮----
+interface AdvancedTradeFill {
+  fill_price: string;
+  product_id: string;
+  order_id: string;
+  commission: string;
+  order_side: 'BUY' | 'SELL';
+}
+⋮----
+export interface CBAppTransaction {
+  id: string;
+  type: string;
+  status: string;
+  amount: TransactionAmount;
+  native_amount: TransactionAmount;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+  resource: string;
+  resource_path: string;
+  network?: TransactionNetwork;
+  from?: TransactionFrom;
+  to?: TransactionTo;
+  details?: TransactionDetails;
+  instant_exchange?: boolean;
+  advanced_trade_fill?: AdvancedTradeFill;
+  cancelable?: boolean;
+  idem?: string;
+}
+⋮----
+/**
+ *
+ * Deposits/Withdrawal Endpoints
+ *
+ */
+⋮----
+interface DepositWithdrawalPaymentMethod {
+  id: string;
+  resource: string;
+  resource_path: string;
+}
+⋮----
+interface DepositWithdrawalTransaction {
+  id: string;
+  resource: string;
+  resource_path: string;
+}
+⋮----
+interface DepositWithdrawalAmountCurrency {
+  amount: string;
+  currency: string;
+}
+⋮----
+export interface CBAppDepositWithdrawal {
+  id: string;
+  status: string;
+  payment_method: DepositWithdrawalPaymentMethod;
+  transaction: DepositWithdrawalTransaction;
+  amount: DepositWithdrawalAmountCurrency;
+  subtotal: DepositWithdrawalAmountCurrency;
+  created_at: string;
+  updated_at: string;
+  resource: string;
+  resource_path: string;
+  committed: boolean;
+  fee: DepositWithdrawalAmountCurrency;
+  payout_at: string;
+}
+⋮----
+interface TransferAmount {
+  value: string;
+  currency: string;
+}
+⋮----
+interface TransferOwner {
+  id: string;
+  uuid: string;
+  user_uuid: string;
+  type: string;
+}
+⋮----
+interface TransferLedgerAccount {
+  account_id: string;
+  currency: string;
+  owner: TransferOwner;
+}
+⋮----
+interface TransferExternalPaymentMethod {
+  payment_method_id: string;
+}
+⋮----
+interface TransferSource {
+  type: string;
+  network: string;
+  payment_method_id: string;
+  external_payment_method: TransferExternalPaymentMethod;
+}
+⋮----
+interface TransferTarget {
+  type: string;
+  network: string;
+  payment_method_id: string;
+  ledger_account: TransferLedgerAccount;
+}
+⋮----
+interface TransferFee {
+  title: string;
+  description: string;
+  amount: TransferAmount;
+  type: string;
+}
+⋮----
+export interface CBAppTransferDepositWithdrawal {
+  user_entered_amount: TransferAmount;
+  amount: TransferAmount;
+  total: TransferAmount;
+  subtotal: TransferAmount;
+  idem: string;
+  committed: boolean;
+  id: string;
+  instant: boolean;
+  source: TransferSource;
+  target: TransferTarget;
+  payout_at: string;
+  status: string;
+  user_reference: string;
+  type: string;
+  created_at: string | null;
+  updated_at: string | null;
+  user_warnings: any[];
+  fees: any[];
+  total_fee: TransferFee;
+  cancellation_reason: string | null;
+  hold_days: number;
+  nextStep: any | null;
+  checkout_url: string;
+  requires_completion_step: boolean;
+}
+⋮----
+export interface CBAppTransfer {
+  transfer: CBAppTransferDepositWithdrawal;
+}
+/**
+ *
+ * Subscriptions Endpoints
+ *
+ */
+⋮----
+export interface CBAppCoinbaseOneSubscription {
+  status: string;
+  tier: string;
+  current_period_end: string;
+}
+⋮----
+/**
+ *
+ * DATA - Currencies Endpoints
+ *
+ */
+⋮----
+export interface CBAppFiatCurrency {
+  id: string;
+  name: string;
+  min_size: string;
+}
+⋮----
+export interface CBAppCryptocurrency {
+  code: string;
+  name: string;
+  color: string;
+  sort_index: number;
+  exponent: number;
+  type: string;
+  address_regex: string;
+  asset_id: string;
+}
+⋮----
+/**
+ *
+ * DATA- Exchange rates Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * DATA - Prices Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * DATA - Time Endpoints
+ *
+ */
 
 ================
 File: src/types/response/coinbase-exchange.ts
@@ -7477,6 +6550,359 @@ getPaymentMethod(params:
 getApiKeyPermissions(): Promise<AdvTradeApiKeyPermissions>
 
 ================
+File: src/CBAppClient.ts
+================
+import { AxiosRequestConfig } from 'axios';
+⋮----
+import { BaseRestClient } from './lib/BaseRestClient.js';
+import {
+  getParamsFromURL,
+  REST_CLIENT_TYPE_ENUM,
+  RestClientOptions,
+  RestClientType,
+} from './lib/requestUtils.js';
+import {
+  CBAppDepositFundsRequest,
+  CBAppSendMoneyRequest,
+  CBAppTransferMoneyRequest,
+  CBAppWithdrawFundsRequest,
+} from './types/request/coinbase-app-client.js';
+import {
+  CBAppAccount,
+  CBAppAddress,
+  CBAppCoinbaseOneSubscription,
+  CBAppCryptocurrency,
+  CBAppDepositWithdrawal,
+  CBAppFiatCurrency,
+  CBAppPagination,
+  CBAppTransaction,
+  CBAppTransfer,
+} from './types/response/coinbase-app-client.js';
+⋮----
+/**
+ * REST client for Coinbase's Coinbase App API:
+ * https://docs.cdp.coinbase.com/coinbase-app/docs/welcome
+ */
+export class CBAppClient extends BaseRestClient
+⋮----
+constructor(
+    restClientOptions: RestClientOptions = {},
+    requestOptions: AxiosRequestConfig = {},
+)
+⋮----
+// Some endpoints return a warning if a version header isn't included: https://docs.cdp.coinbase.com/coinbase-app/docs/versioning
+// Currently set to a date from the changelog: https://docs.cdp.coinbase.com/coinbase-app/docs/changelog
+⋮----
+getClientType(): RestClientType
+⋮----
+/**
+   *
+   * Account Endpoints
+   *
+   */
+⋮----
+/**
+   * List Accounts
+   *
+   * List a current user's accounts to which the authentication method has access to.
+   *
+   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
+   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of accounts.
+   */
+getAccounts(params?: {
+    paginationURL?: string;
+    starting_after?: string;
+}): Promise<
+⋮----
+/**
+   * Show Account
+   *
+   * Get a current user's account by account ID or currency string.
+   */
+getAccount(params:
+⋮----
+/**
+   *
+   * Address Endpoints
+   *
+   */
+⋮----
+/**
+   * Create Address
+   *
+   * Creates a new address for an account. Addresses can be created for wallet account types.
+   */
+createAddress(params:
+⋮----
+/**
+   * List Addresses
+   *
+   * Lists addresses for an account.
+   *
+   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
+   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of addresses.
+   */
+getAddresses(params: {
+    account_id: string;
+    paginationURL?: string;
+}): Promise<
+⋮----
+/**
+   * Show Address
+   *
+   * Get an single address for an account.
+   * A regular cryptocurrency address can be used in place of address_id but the address must be associated with the correct account.
+   *
+   * !! An address can only be associated with one account. See Create Address to create new addresses.
+   */
+getAddress(params:
+⋮----
+/**
+   * List Address Transactions
+   *
+   * List transactions that have been sent to a specific address.
+   * A regular cryptocurrency address can be used in place of address_id but the address must be associated with the correct account.
+   *
+   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
+   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of transactions.
+   */
+getAddressTransactions(params: {
+    account_id: string;
+    addressId: string;
+    paginationURL?: string;
+}): Promise<
+⋮----
+/**
+   *
+   * Transactions Endpoints
+   *
+   */
+⋮----
+/**
+   * Send Money
+   *
+   * Send funds to a network address for any Coinbase supported asset, or email address of the recipient.
+   * No transaction fees are required for off-blockchain cryptocurrency transactions.
+   *
+   * TRAVEL RULE DATA GUIDE: https://docs.cdp.coinbase.com/coinbase-app/docs/coinbase-app-travel-rule
+   */
+sendMoney(
+    params: CBAppSendMoneyRequest,
+): Promise<
+⋮----
+/**
+   * Transfer Money
+   *
+   * Transfer any Coinbase supported digital asset between two of a single user's accounts.
+   * Accounts must support the same currency for transfers to be successful.
+   */
+transferMoney(
+    params: CBAppTransferMoneyRequest,
+): Promise<
+⋮----
+/**
+   * List Transactions
+   *
+   * Lists the transactions of an account by account ID.
+   *
+   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
+   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of transactions.
+   */
+getTransactions(params: {
+    account_id: string;
+    paginationURL?: string;
+}): Promise<
+⋮----
+/**
+   * Show Transaction
+   *
+   * Get a single transaction for an account.
+   */
+getTransaction(params: {
+    account_id: string;
+    transactionId: string;
+}): Promise<
+⋮----
+/**
+   *
+   * Deposits Endpoints
+   *
+   */
+⋮----
+/**
+   * Deposit Funds
+   *
+   * Deposits user-defined amount of funds to a fiat account.
+   */
+depositFunds(params: CBAppDepositFundsRequest): Promise<CBAppTransfer>
+⋮----
+/**
+   * Commit Deposit
+   *
+   * Completes a deposit that is created in commit: false state.
+   */
+commitDeposit(params: {
+    account_id: string;
+    deposit_id: string;
+}): Promise<CBAppTransfer>
+⋮----
+/**
+   * List Deposits
+   *
+   * Lists fiat deposits for an account.
+   *
+   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
+   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of deposits.
+   */
+getDeposits(params:
+⋮----
+/**
+   * Show Deposit
+   *
+   * Get one deposit by deposit Id.
+   */
+getDeposit(params:
+⋮----
+/**
+   *
+   * Withdrawals Endpoints
+   *
+   */
+⋮----
+/**
+   * Withdraw Funds
+   *
+   * Withdraws a user-defined amount of funds from a fiat account.
+   */
+withdrawFunds(params: CBAppWithdrawFundsRequest): Promise<CBAppTransfer>
+⋮----
+/**
+   * Commit Withdrawal
+   *
+   * Completes a withdrawal that is created in commit: false state.
+   */
+commitWithdrawal(params: {
+    account_id: string;
+    withdrawal_id: string;
+}): Promise<CBAppTransfer>
+⋮----
+/**
+   * List Withdrawals
+   *
+   * Lists withdrawals for an account.
+   *
+   * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
+   * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of withdrawals.
+   */
+getWithdrawals(params: {
+    account_id: string;
+    paginationURL?: string;
+}): Promise<
+⋮----
+/**
+   * Show Withdrawal
+   *
+   * Get a single withdrawal.
+   */
+getWithdrawal(params: {
+    account_id: string;
+    withdrawal_id: string;
+}): Promise<
+⋮----
+/**
+   *
+   * Subscriptions Endpoints
+   *
+   */
+⋮----
+/**
+   * Get Coinbase One Subscription
+   *
+   * Returns a user's Coinbase One subscription status, tier, and current period end.
+   * Requires OAuth2 scope: wallet:subscription:read
+   */
+getCoinbaseOneSubscription(): Promise<
+⋮----
+/**
+   *
+   * DATA - Currencies Endpoints
+   *
+   */
+⋮----
+/**
+   * Get Fiat Currencies
+   *
+   * Lists known fiat currencies. Currency codes conform to the ISO 4217 standard where possible.
+   * Currencies with no representation in ISO 4217 may use a custom code.
+   */
+getFiatCurrencies(): Promise<
+⋮----
+/**
+   * Get Cryptocurrencies
+   *
+   * Lists known cryptocurrencies.
+   */
+getCryptocurrencies(): Promise<CBAppCryptocurrency[]>
+⋮----
+/**
+   *
+   * DATA- Exchange rates Endpoints
+   *
+   */
+⋮----
+/**
+   * Get Exchange Rates
+   *
+   * Get current exchange rates. Default base currency is USD but it can be defined as any supported currency.
+   * Returned rates will define the exchange rate for one unit of the base currency.
+   */
+getExchangeRates(params?:
+⋮----
+/**
+   *
+   * DATA - Prices Endpoints
+   *
+   */
+⋮----
+/**
+   * Get Buy Price
+   *
+   * Get the total price to buy one bitcoin or ether.
+   * This endpoint doesn't require authentication.
+   */
+getBuyPrice(params:
+⋮----
+/**
+   * Get Sell Price
+   *
+   * Get the total price to sell one bitcoin or ether.
+   * This endpoint doesn't require authentication.
+   */
+getSellPrice(params:
+⋮----
+/**
+   * Get Spot Price
+   *
+   * Get the current market price for bitcoin. This is usually somewhere in between the buy and sell price.
+   * This endpoint doesn't require authentication.
+   */
+getSpotPrice(params:
+⋮----
+/**
+   *
+   * DATA - Time Endpoints
+   *
+   */
+⋮----
+/**
+   * Get Current Time
+   *
+   * Get the API server time.
+   * This endpoint doesn't require authentication.
+   */
+getCurrentTime(): Promise<
+
+================
 File: src/CBExchangeClient.ts
 ================
 import { AxiosRequestConfig } from 'axios';
@@ -8245,6 +7671,573 @@ getWrappedAssetConversionRate(params: {
 }): Promise<any>
 
 ================
+File: LICENSE.md
+================
+Copyright 2025 Tiago Siebler
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+================
+File: tsconfig.json
+================
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "noEmitOnError": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": false,
+    "inlineSourceMap": false,
+    "lib": ["esnext"],
+    "listEmittedFiles": false,
+    "listFiles": false,
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noUnusedParameters": true,
+    "pretty": true,
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": false,
+    "sourceMap": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "types": ["node", "jest"],
+    "module": "commonjs",
+    "outDir": "dist/cjs",
+    "target": "esnext"
+  },
+  "compileOnSave": true,
+  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*.*", "test/**/*.*", ".eslintrc.cjs"]
+}
+
+================
+File: src/types/request/coinbase-prime.ts
+================
+/**
+ *
+ * Allocation Endpoints
+ *
+ */
+⋮----
+export interface CreatePrimePortfolioAllocationsRequest {
+  allocation_id?: string;
+  source_portfolio_id?: string;
+  product_id?: string;
+  order_ids?: string[];
+  allocation_legs: {
+    allocation_leg_id: string;
+    destination_portfolio_id: string;
+    amount: string;
+  }[];
+  size_type?: 'BASE' | 'QUOTE' | 'PERCENT';
+  remainder_destination_portfolio?: string;
+}
+⋮----
+export interface CreatePrimePortfolioNetAllocationsRequest {
+  netting_id?: string;
+  source_portfolio_id?: string;
+  product_id?: string;
+  order_ids?: string[];
+  allocation_legs: {
+    allocation_leg_id: string;
+    destination_portfolio_id: string;
+    amount: string;
+  }[];
+  size_type?: 'BASE' | 'QUOTE' | 'PERCENT';
+  remainder_destination_portfolio?: string;
+}
+⋮----
+export interface GetPrimePortfolioAllocationsRequest {
+  portfolio_id: string;
+  product_ids?: string[];
+  order_side?: 'BUY' | 'SELL';
+  start_date?: string;
+  end_date?: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'DESC' | 'ASC';
+}
+/**
+ *
+ * Invoice Endpoints
+ *
+ */
+⋮----
+export interface GetPrimeInvoicesRequest {
+  entity_id: string;
+  states?: string[];
+  billing_year?: number;
+  billing_month?: number;
+  cursor?: number;
+  limit?: number;
+}
+/**
+ *
+ * Assets Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * Payment Methods Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * Users Endpoints
+ *
+ */
+⋮----
+export interface GetPrimeUsersRequest {
+  entity_id: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'ASC' | 'DESC';
+}
+⋮----
+export interface GetPrimePortfolioUsersRequest {
+  portfolio_id: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: string;
+}
+/**
+ *
+ * Portfolios Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * Activities Endpoints
+ *
+ */
+⋮----
+export interface GetPrimeActivitiesRequest {
+  portfolio_id: string;
+  symbols?: string[];
+  categories?: string[];
+  statuses?: string[];
+  start_time?: string;
+  end_time?: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'ASC' | 'DESC';
+}
+⋮----
+export interface GetPrimeEntityActivitiesRequest {
+  entity_id: string;
+  activity_level?: 'ACTIVITY_LEVEL_ALL';
+  symbols?: string[];
+  categories?: string[];
+  statuses?: string[];
+  start_time?: string;
+  end_time?: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'ASC' | 'DESC';
+}
+⋮----
+export interface GetPrimePortfolioActivityByIdRequest {
+  portfolio_id: string;
+  activity_id: string;
+}
+/**
+ *
+ * Address Book Endpoints
+ *
+ */
+⋮----
+export interface GetPrimeAddressBookRequest {
+  portfolio_id: string;
+  currency_symbol?: string;
+  search?: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'DESC' | 'ASC';
+}
+⋮----
+export interface CreatePrimeAddressBookEntryRequest {
+  portfolio_id: string;
+  address: string;
+  currency_symbol: string;
+  name: string;
+  account_identifier?: string;
+}
+/**
+ *
+ * Balances Endpoints
+ *
+ */
+⋮----
+export interface GetPrimeWeb3WalletBalancesRequest {
+  portfolio_id: string;
+  wallet_id: string;
+  visibility_statuses?: string[];
+  cursor?: string;
+  limit?: number;
+}
+⋮----
+/**
+ *
+ * Commission Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * Orders Endpoints
+ *
+ */
+⋮----
+export interface GetPrimePortfolioFillsRequest {
+  portfolio_id: string;
+  start_date: string;
+  end_date?: string;
+  limit?: number;
+  cursor?: string;
+  sort_direction?: 'DESC' | 'ASC';
+}
+⋮----
+export interface GetPrimeOpenOrdersRequest {
+  portfolio_id: string;
+  product_ids?: string[];
+  order_type?:
+    | 'MARKET'
+    | 'LIMIT'
+    | 'TWAP'
+    | 'BLOCK'
+    | 'VWAP'
+    | 'STOP_LIMIT'
+    | 'PEG';
+  sort_direction?: 'DESC' | 'ASC';
+  start_date: string;
+  order_side?: 'BUY' | 'SELL';
+  end_date?: string;
+}
+⋮----
+export interface SubmitPrimeOrderRequest {
+  portfolio_id: string;
+  product_id: string;
+  side: 'BUY' | 'SELL';
+  client_order_id?: string;
+  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'VWAP' | 'STOP_LIMIT' | 'PEG';
+  base_quantity?: string;
+  quote_value?: string;
+  limit_price?: string;
+  stop_price?: string;
+  start_time?: string;
+  expiry_time?: string;
+  time_in_force?:
+    | 'FILL_OR_KILL'
+    | 'GOOD_UNTIL_DATE_TIME'
+    | 'GOOD_UNTIL_CANCELLED'
+    | 'IMMEDIATE_OR_CANCEL';
+  stp_id?: string;
+  display_quote_size?: string;
+  display_base_size?: string;
+  is_raise_exact?: boolean;
+  historical_pov?: string;
+  peg_offset_type?:
+    | 'PEG_OFFSET_TYPE_PRICE'
+    | 'PEG_OFFSET_TYPE_BPS'
+    | 'PEG_OFFSET_TYPE_BASIS_POINTS'
+    | 'PEG_OFFSET_TYPE_DEPTH'
+    | 'PEG_OFFSET_TYPE_CUMULATIVE_DEPTH_IN_BASE_UNITS';
+  offset?: string;
+  wig_level?: string;
+}
+⋮----
+export interface EditPrimeOrderRequest {
+  portfolio_id: string;
+  order_id: string;
+  orig_client_order_id: string;
+  client_order_id: string;
+  product_id?: string;
+  base_quantity?: string;
+  quote_value?: string;
+  limit_price?: string;
+  expiry_time?: string;
+  display_quote_size?: string;
+  display_base_size?: string;
+  stop_price?: string;
+  offset?: string;
+  wig_level?: string;
+}
+⋮----
+export interface RotatePrimeApiKeyRequest {
+  api_key_id?: string;
+}
+⋮----
+export interface GetPrimeOrderPreviewRequest {
+  portfolio_id: string;
+  product_id: string;
+  side: 'BUY' | 'SELL';
+  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT' | 'PEG';
+  base_quantity?: string;
+  quote_value?: string;
+  limit_price?: string;
+  stop_price?: string;
+  start_time?: string;
+  expiry_time?: string;
+  time_in_force?:
+    | 'FILL_OR_KILL'
+    | 'GOOD_UNTIL_DATE_TIME'
+    | 'GOOD_UNTIL_CANCELLED'
+    | 'IMMEDIATE_OR_CANCEL';
+  is_raise_exact?: boolean;
+  historical_pov?: string;
+  peg_offset_type?:
+    | 'PEG_OFFSET_TYPE_PRICE'
+    | 'PEG_OFFSET_TYPE_BPS'
+    | 'PEG_OFFSET_TYPE_BASIS_POINTS'
+    | 'PEG_OFFSET_TYPE_DEPTH'
+    | 'PEG_OFFSET_TYPE_CUMULATIVE_DEPTH_IN_BASE_UNITS';
+  offset?: string;
+  wig_level?: string;
+}
+⋮----
+export interface GetPrimePortfolioOrdersRequest {
+  portfolio_id: string;
+  order_statuses?: (
+    | 'FILLED'
+    | 'CANCELLED'
+    | 'EXPIRED'
+    | 'FAILED'
+    | 'PENDING'
+  )[];
+  product_ids?: string[];
+  order_type?:
+    | 'MARKET'
+    | 'LIMIT'
+    | 'TWAP'
+    | 'BLOCK'
+    | 'VWAP'
+    | 'STOP_LIMIT'
+    | 'PEG';
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'DESC' | 'ASC';
+  order_side?: 'BUY' | 'SELL';
+  start_date?: string;
+  end_date?: string;
+}
+⋮----
+export interface GetPrimeOrderFillsRequest {
+  portfolio_id: string;
+  order_id: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'DESC' | 'ASC';
+}
+/**
+ *
+ * Products Endpoints
+ *
+ */
+⋮----
+export interface GetPrimePortfolioProductsRequest {
+  portfolio_id: string;
+  cursor?: string;
+  /** Must be between 0 and 1000 (defaults to 10 when unset). Values > 1000 are rejected. */
+  limit?: number;
+  sort_direction?: 'DESC' | 'ASC';
+  /** If unset, returns all product types available for the portfolio (including FUTURE). */
+  product_type?: 'SPOT' | 'FUTURE' | 'OPTION';
+  /** Only applicable when product_type = FUTURE. */
+  contract_expiry_type?:
+    | 'CONTRACT_EXPIRY_TYPE_EXPIRING'
+    | 'CONTRACT_EXPIRY_TYPE_PERPETUAL';
+  /** Filter by expiry status for expiring futures. */
+  expiring_contract_status?:
+    | 'EXPIRING_CONTRACT_STATUS_UNEXPIRED'
+    | 'EXPIRING_CONTRACT_STATUS_EXPIRED'
+    | 'EXPIRING_CONTRACT_STATUS_ALL';
+}
+⋮----
+/** Must be between 0 and 1000 (defaults to 10 when unset). Values > 1000 are rejected. */
+⋮----
+/** If unset, returns all product types available for the portfolio (including FUTURE). */
+⋮----
+/** Only applicable when product_type = FUTURE. */
+⋮----
+/** Filter by expiry status for expiring futures. */
+⋮----
+/**
+ *
+ * Travel Rule Endpoints
+ *
+ */
+⋮----
+export interface GetPrimeTransactionTravelRuleDataRequest {
+  portfolio_id: string;
+  transaction_id: string;
+}
+⋮----
+/**
+ *
+ * Transactions Endpoints
+ *
+ */
+⋮----
+export interface GetPrimePortfolioTransactionsRequest {
+  portfolio_id: string;
+  symbols?: string[];
+  types?: string[];
+  start_time?: string;
+  end_time?: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'DESC' | 'ASC';
+}
+⋮----
+export interface CreatePrimeConversionRequest {
+  portfolio_id: string;
+  wallet_id: string;
+  amount: string;
+  destination: string;
+  idempotency_key: string;
+  source_symbol: string;
+  destination_symbol: string;
+}
+⋮----
+export interface GetPrimeWalletTransactionsRequest {
+  portfolio_id: string;
+  wallet_id: string;
+  types?: string[];
+  start_time?: string;
+  end_time?: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'DESC' | 'ASC';
+}
+⋮----
+export interface CreatePrimeTransferRequest {
+  portfolio_id: string;
+  wallet_id: string;
+  amount: string;
+  destination: string;
+  idempotency_key: string;
+  currency_symbol: string;
+}
+⋮----
+export interface CreatePrimeWithdrawalRequest {
+  portfolio_id: string;
+  wallet_id: string;
+  amount: string;
+  destination_type: 'DESTINATION_PAYMENT_METHOD' | 'DESTINATION_BLOCKCHAIN';
+  idempotency_key: string;
+  currency_symbol: string;
+  payment_method?: {
+    payment_method_id: string;
+  };
+  blockchain_address?: {
+    address: string;
+    account_identifier?: string;
+  };
+}
+/**
+ *
+ * Wallets Endpoints
+ *
+ */
+⋮----
+export interface GetPrimePortfolioWalletsRequest {
+  portfolio_id: string;
+  type: 'VAULT' | 'TRADING' | 'WALLET_TYPE_OTHER' | 'WEB3';
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'DESC' | 'ASC';
+  symbols?: string[];
+}
+⋮----
+export interface CreatePrimeWalletRequest {
+  portfolio_id: string;
+  name: string;
+  symbol: string;
+  wallet_type: 'VAULT' | 'TRADING' | 'WALLET_TYPE_OTHER' | 'WEB3';
+}
+⋮----
+export interface GetPrimeWalletDepositInstructionsRequest {
+  portfolio_id: string;
+  wallet_id: string;
+  deposit_type?:
+    | 'UNKNOWN_WALLET_DEPOSIT_TYPE'
+    | 'CRYPTO'
+    | 'WIRE'
+    | 'SEN'
+    | 'SWIFT';
+}
+⋮----
+/**
+ *
+ * Financing Endpoints
+ *
+ */
+⋮----
+export interface GetPrimeEntityAccrualsRequest {
+  entity_id: string;
+  portfolio_id?: string;
+  start_date?: string;
+  end_date?: string;
+}
+⋮----
+export interface GetPrimeEntityLocateAvailabilitiesRequest {
+  entity_id: string;
+  conversion_date?: string;
+  locate_date?: string;
+}
+⋮----
+export interface GetPrimeEntityMarginSummariesRequest {
+  entity_id: string;
+  start_date?: string;
+  end_date?: string;
+}
+⋮----
+export interface GetPrimeEntityTFTieredFeesRequest {
+  entity_id: string;
+  effective_at?: string;
+}
+⋮----
+export interface GetPrimePortfolioAccrualsRequest {
+  portfolio_id: string;
+  start_date?: string;
+  end_date?: string;
+}
+⋮----
+export interface GetPrimePortfolioBuyingPowerRequest {
+  portfolio_id: string;
+  base_currency: string;
+  quote_currency: string;
+}
+⋮----
+export interface GetPrimePortfolioLocatesRequest {
+  portfolio_id: string;
+  locate_ids?: string[];
+  conversion_date?: string;
+  locate_date?: string;
+}
+⋮----
+export interface GetPrimePortfolioMarginConversionsRequest {
+  portfolio_id: string;
+  start_date?: string;
+  end_date?: string;
+}
+⋮----
+export interface GetPrimePortfolioWithdrawalPowerRequest {
+  portfolio_id: string;
+  symbol: string;
+}
+
+================
 File: src/CBPrimeClient.ts
 ================
 import { AxiosRequestConfig } from 'axios';
@@ -8295,7 +8288,6 @@ import {
   RotatePrimeApiKeyRequest,
   SubmitPrimeOrderRequest,
 } from './types/request/coinbase-prime.js';
-import { GetPrimeTransactionTravelRuleDataResponse } from './types/response/coinbase-prime.js';
 ⋮----
 /**
  * REST client for Coinbase Prime API:
@@ -8823,7 +8815,7 @@ getTransactionById(params: {
    */
 getTransactionTravelRuleData(
     params: GetPrimeTransactionTravelRuleDataRequest,
-): Promise<GetPrimeTransactionTravelRuleDataResponse>
+): Promise<any>
 ⋮----
 /**
    * Create Conversion
@@ -8893,53 +8885,6 @@ getWalletById(params: {
 getWalletDepositInstructions(
     params: GetPrimeWalletDepositInstructionsRequest,
 ): Promise<any>
-
-================
-File: LICENSE.md
-================
-Copyright 2025 Tiago Siebler
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-================
-File: tsconfig.json
-================
-{
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "noEmitOnError": true,
-    "declaration": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": false,
-    "inlineSourceMap": false,
-    "lib": ["esnext"],
-    "listEmittedFiles": false,
-    "listFiles": false,
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noUnusedParameters": true,
-    "pretty": true,
-    "removeComments": false,
-    "resolveJsonModule": true,
-    "skipLibCheck": false,
-    "sourceMap": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "types": ["node", "jest"],
-    "module": "commonjs",
-    "outDir": "dist/cjs",
-    "target": "esnext"
-  },
-  "compileOnSave": true,
-  "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*.*", "test/**/*.*", ".eslintrc.cjs"]
-}
 
 ================
 File: webpack/webpack.config.cjs
