@@ -325,8 +325,31 @@ export interface GetPrimeOrderFillsRequest {
 export interface GetPrimePortfolioProductsRequest {
   portfolio_id: string;
   cursor?: string;
+  /** Must be between 0 and 1000 (defaults to 10 when unset). Values > 1000 are rejected. */
   limit?: number;
   sort_direction?: 'DESC' | 'ASC';
+  /** If unset, returns all product types available for the portfolio (including FUTURE). */
+  product_type?: 'SPOT' | 'FUTURE' | 'OPTION';
+  /** Only applicable when product_type = FUTURE. */
+  contract_expiry_type?:
+    | 'CONTRACT_EXPIRY_TYPE_EXPIRING'
+    | 'CONTRACT_EXPIRY_TYPE_PERPETUAL';
+  /** Filter by expiry status for expiring futures. */
+  expiring_contract_status?:
+    | 'EXPIRING_CONTRACT_STATUS_UNEXPIRED'
+    | 'EXPIRING_CONTRACT_STATUS_EXPIRED'
+    | 'EXPIRING_CONTRACT_STATUS_ALL';
+}
+
+/**
+ *
+ * Travel Rule Endpoints
+ *
+ */
+
+export interface GetPrimeTransactionTravelRuleDataRequest {
+  portfolio_id: string;
+  transaction_id: string;
 }
 
 /**
