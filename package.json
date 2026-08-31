@@ -1,6 +1,6 @@
 {
   "name": "coinbase-api",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Node.js SDK for Coinbase's Advanced Trade, App, Exchange, International, Prime & Commerce REST APIs and WebSockets, with TypeScript & strong end to end tests.",
   "scripts": {
     "clean": "rm -rf dist",
@@ -88,5 +88,5 @@
   "bugs": {
     "url": "https://github.com/sieblyio/coinbase-api/issues"
   },
-  "homepage": "https://github.com/sieblyio/coinbase-api#readme"
+  "homepage": "https://siebly.io/sdk/coinbase/javascript"
 }
