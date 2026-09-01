@@ -216,10 +216,10 @@ siebly:
         href: /examples/Coinbase
       - heading: Endpoint map
         summary: Find the SDK method for each supported Coinbase endpoint.
-        href: https://github.com/tiagosiebler/coinbase-api/blob/master/docs/endpointFunctionList.md
+        href: https://github.com/sieblyio/coinbase-api/blob/master/docs/endpointFunctionList.md
       - heading: Source repository
         summary: Browse SDK source, releases, issues, and endpoint coverage on GitHub.
-        href: https://github.com/tiagosiebler/coinbase-api
+        href: https://github.com/sieblyio/coinbase-api
 -->
 
 # Coinbase API JavaScript Tutorial for Node.js
@@ -239,7 +239,7 @@ The SDK handles REST API authentication, short-lived JWT creation, product-speci
 
 - Coinbase JavaScript SDK by Siebly: [`coinbase-api`](https://siebly.io/sdk/coinbase/javascript)
 - npm package: [`coinbase-api`](https://www.npmjs.com/package/coinbase-api)
-- GitHub repository: [`tiagosiebler/coinbase-api`](https://github.com/tiagosiebler/coinbase-api)
+- GitHub repository: [`sieblyio/coinbase-api`](https://github.com/sieblyio/coinbase-api)
 - SDK examples: [Coinbase SDK examples](https://siebly.io/examples/Coinbase)
 - SDK endpoint map: [Coinbase JavaScript endpoint reference](./endpointFunctionList.md)
 - Official documentation: [Coinbase Developer Documentation](https://docs.cdp.coinbase.com/)
@@ -1447,7 +1447,7 @@ API key authentication is for server-side access to an account you control. Use 
 
 - [Coinbase JavaScript SDK page](https://siebly.io/sdk/coinbase/javascript)
 - [`coinbase-api` on npm](https://www.npmjs.com/package/coinbase-api)
-- [Coinbase SDK source](https://github.com/tiagosiebler/coinbase-api)
+- [Coinbase SDK source](https://github.com/sieblyio/coinbase-api)
 - [Coinbase examples on Siebly](https://siebly.io/examples/Coinbase)
 - [SDK endpoint map](./endpointFunctionList.md)
 - [Advanced Trade REST API documentation](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/rest-api)
