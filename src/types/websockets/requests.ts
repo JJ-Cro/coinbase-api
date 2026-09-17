@@ -75,6 +75,13 @@ export interface WsPrimeRequestOperation<TWSTopic extends string = string> {
   svcAccountId: string;
   portfolio_id: string;
   product_ids: string[];
+  /** Not included in the signature payload. Case-sensitive. */
+  product_type?:
+    | 'SPOT'
+    | 'FUTURE'
+    | 'OPTION'
+    | 'PREDICTION_MARKET'
+    | 'UNKNOWN_PRODUCT_TYPE';
 }
 
 /**

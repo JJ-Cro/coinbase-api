@@ -29,6 +29,8 @@ import {
   GetPrimePortfolioAccrualsRequest,
   GetPrimePortfolioAllocationsRequest,
   GetPrimePortfolioBuyingPowerRequest,
+  GetPrimePortfolioDerivativePositionsRequest,
+  GetPrimePortfolioDerivativesCurrencySummaryRequest,
   GetPrimePortfolioFillsRequest,
   GetPrimePortfolioLocatesRequest,
   GetPrimePortfolioMarginConversionsRequest,
@@ -317,6 +319,16 @@ export class CBPrimeClient extends BaseRestClient {
   }
 
   /**
+   * Get Conversion Fees
+   *
+   * Get your organization's stablecoin conversion fee tiers and month-to-date net conversion volume per currency.
+   * Requires an organization-scoped API key. Required scope: prime.financing.get_conversion_fees.read
+   */
+  getConversionFees(): Promise<any> {
+    return this.getPrivate('/v1/conversion/fees');
+  }
+
+  /**
    *
    * Invoice Endpoints
    *
@@ -367,6 +379,43 @@ export class CBPrimeClient extends BaseRestClient {
   }): Promise<any> {
     const { entity_id, ...query } = params;
     return this.getPrivate(`/v1/entities/${entity_id}/positions`, query);
+  }
+
+  /**
+   *
+   * Futures Endpoints
+   *
+   */
+
+  /**
+   * List Portfolio Derivative Positions
+   *
+   * Retrieve all active derivative positions for a given portfolio across US Futures, prediction markets, and international derivatives.
+   * Required scope: prime.futures.get_derivative_positions.read
+   */
+  getPortfolioDerivativePositions(
+    params: GetPrimePortfolioDerivativePositionsRequest,
+  ): Promise<any> {
+    const { portfolio_id, ...query } = params;
+    return this.getPrivate(
+      `/v1/portfolios/${portfolio_id}/derivatives/positions`,
+      query,
+    );
+  }
+
+  /**
+   * Get Portfolio Derivatives Currency Summary
+   *
+   * Retrieve per-currency international derivatives balances for a given portfolio.
+   * Required scope: prime.futures.get_derivatives_balance_summary.read
+   */
+  getPortfolioDerivativesCurrencySummary(
+    params: GetPrimePortfolioDerivativesCurrencySummaryRequest,
+  ): Promise<any> {
+    const { portfolio_id } = params;
+    return this.getPrivate(
+      `/v1/portfolios/${portfolio_id}/derivatives/currency_summary`,
+    );
   }
 
   /**
