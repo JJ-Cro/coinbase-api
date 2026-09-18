@@ -329,7 +329,12 @@ export interface GetPrimePortfolioProductsRequest {
   limit?: number;
   sort_direction?: 'DESC' | 'ASC';
   /** If unset, returns all product types available for the portfolio (including FUTURE). */
-  product_type?: 'SPOT' | 'FUTURE' | 'OPTION';
+  product_type?:
+    | 'SPOT'
+    | 'FUTURE'
+    | 'OPTION'
+    | 'PREDICTION_MARKET'
+    | 'UNKNOWN_PRODUCT_TYPE';
   /** Only applicable when product_type = FUTURE. */
   contract_expiry_type?:
     | 'CONTRACT_EXPIRY_TYPE_EXPIRING'
@@ -505,4 +510,19 @@ export interface GetPrimePortfolioMarginConversionsRequest {
 export interface GetPrimePortfolioWithdrawalPowerRequest {
   portfolio_id: string;
   symbol: string;
+}
+
+/**
+ *
+ * Futures Endpoints
+ *
+ */
+
+export interface GetPrimePortfolioDerivativePositionsRequest {
+  portfolio_id: string;
+  product_id?: string;
+}
+
+export interface GetPrimePortfolioDerivativesCurrencySummaryRequest {
+  portfolio_id: string;
 }

@@ -6,6 +6,30 @@
 
 import { OrderConfiguration } from '../shared.types.js';
 
+export type AdvTradeProductType =
+  | 'UNKNOWN_PRODUCT_TYPE'
+  | 'SPOT'
+  | 'FUTURE'
+  | 'EQUITY'
+  | 'OPTION_GROUP'
+  | 'FUTURE_GROUP';
+
+export type AdvTradeEquityTradingSession =
+  | 'UNKNOWN_EQUITY_TRADING_SESSION'
+  | 'EQUITY_TRADING_SESSION_NORMAL'
+  | 'EQUITY_TRADING_SESSION_AFTER_HOURS'
+  | 'EQUITY_TRADING_SESSION_MULTI_SESSION'
+  | 'EQUITY_TRADING_SESSION_OVERNIGHT'
+  | 'EQUITY_TRADING_SESSION_PRE_MARKET';
+
+export type AdvTradeDisplayedOrderConfig =
+  | 'UNKNOWN_DISPLAYED_ORDER_CONFIG'
+  | 'INSTANT_GFD'
+  | 'LIMIT_GFD'
+  | 'LIMIT_GTC'
+  | 'MARKET_GFD'
+  | 'EXERCISE_GFD';
+
 /**
  *
  * Products Endpoints
@@ -15,7 +39,7 @@ import { OrderConfiguration } from '../shared.types.js';
 export interface GetAdvTradeProductsRequest {
   limit?: number;
   offset?: number;
-  product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'FUTURE' | 'SPOT';
+  product_type?: AdvTradeProductType;
   product_ids?: string[];
   contract_expiry_type?:
     | 'UNKNOWN_CONTRACT_EXPIRY_TYPE'
@@ -76,12 +100,16 @@ export interface SubmitAdvTradeOrderRequest {
   margin_type?: 'CROSS' | 'ISOLATED';
   retail_portfolio_id?: string; // deprecated
   preview_id?: string;
+  equity_order_metadata?: {
+    equity_trading_session?: AdvTradeEquityTradingSession;
+    displayed_order_config?: AdvTradeDisplayedOrderConfig;
+  };
 }
 
 export interface GetAdvTradeOrdersRequest {
   order_ids?: string[];
   product_ids?: string[];
-  product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
+  product_type?: AdvTradeProductType;
   order_status?: string[];
   time_in_forces?: string[];
   order_types?: string[];
@@ -123,6 +151,10 @@ export interface PreviewAdvTradeOrderRequest {
   leverage?: string;
   margin_type?: 'ISOLATED' | 'CROSS';
   retail_portfolio_id?: string;
+  equity_order_metadata?: {
+    equity_trading_session?: AdvTradeEquityTradingSession;
+    displayed_order_config?: AdvTradeDisplayedOrderConfig;
+  };
 }
 
 /**
@@ -177,7 +209,7 @@ export interface AllocateAdvTradePortfolioRequest {
  */
 
 export interface GetAdvTradeTransactionSummaryRequest {
-  product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
+  product_type?: AdvTradeProductType;
   contract_expiry_type?: 'UNKNOWN_CONTRACT_EXPIRY_TYPE' | 'SPOT' | 'FUTURE';
   product_venue?: 'UNKNOWN_VENUE_TYPE' | 'CBE' | 'FCM' | 'INTX';
 }
@@ -207,9 +239,12 @@ export interface SubmitAdvTradeConvertQuoteRequest {
 export interface GetAdvTradePublicProductsRequest {
   limit?: number;
   offset?: number;
-  product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
+  product_type?: AdvTradeProductType;
   product_ids?: string[];
-  contract_expiry_type?: 'UNKNOWN_CONTRACT_EXPIRY_TYPE' | 'SPOT' | 'FUTURE';
+  contract_expiry_type?:
+    | 'UNKNOWN_CONTRACT_EXPIRY_TYPE'
+    | 'PERPETUAL'
+    | 'EXPIRING';
   expiring_contract_status?:
     | 'UNKNOWN_EXPIRING_CONTRACT_STATUS'
     | 'STATUS_UNEXPIRED'

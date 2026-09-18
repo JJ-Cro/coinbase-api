@@ -260,6 +260,8 @@ export interface AdvTradeOrder {
   leverage?: string;
   margin_type?: string;
   retail_portfolio_id?: string;
+  displayed_order_config?: string;
+  equity_trading_session?: string;
 }
 
 export interface AdvTradeFill {
