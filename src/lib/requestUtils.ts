@@ -6,6 +6,14 @@ import { CustomOrderIdProperty } from '../types/shared.types.js';
 export const REST_CLIENT_TYPE_ENUM = {
   /** Coinbase Advanced Trade API */
   advancedTrade: 'advancedTrade',
+  /**
+   * Coinbase Advanced Trade global derivatives on Advanced Trade:
+   * https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/derivatives/overview
+   *
+   * Technical migration guide regarding Coinbase's new Deribit-powered gateway running on the Starbase platform:
+   * https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/derivatives/technical
+   */
+  advancedTradeGlobal: 'advancedTradeGlobal',
   /** Coinbase App API */
   coinbaseApp: 'coinbaseApp',
   /** Coinbase Exchange API */

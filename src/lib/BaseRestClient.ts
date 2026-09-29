@@ -476,6 +476,10 @@ export abstract class BaseRestClient {
           // See: https://github.com/tiagosiebler/coinbase-api/issues/24
         }
 
+        case REST_CLIENT_TYPE_ENUM.advancedTradeGlobal: {
+          throw new Error('TODO:!');
+        }
+
         // Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
         case REST_CLIENT_TYPE_ENUM.exchange: {
           const timestampInSeconds = timestampInMs / 1000; // decimals are OK
