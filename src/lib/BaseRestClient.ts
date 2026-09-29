@@ -704,6 +704,19 @@ export abstract class BaseRestClient {
     deleteUndefinedValues(params?.headers);
 
     if (isPublicApi || !this.apiKey || !this.apiSecret) {
+      // JSON-RPC clients pass { body } on public POST. Flat params stay query strings.
+      if (params?.body) {
+        return {
+          ...options,
+          headers: {
+            ...options.headers,
+            ...params.headers,
+          },
+          params: params.query,
+          data: params.body,
+        };
+      }
+
       return {
         ...options,
         params: params,

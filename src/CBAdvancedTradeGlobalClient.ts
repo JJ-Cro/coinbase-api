@@ -1,895 +1,1517 @@
+import { AxiosRequestConfig } from 'axios';
+
 import { BaseRestClient } from './lib/BaseRestClient.js';
-import { REST_CLIENT_TYPE_ENUM, RestClientType } from './lib/requestUtils.js';
 import {
-  AllocateAdvTradePortfolioRequest,
-  CloseAdvTradePositionRequest,
-  GetAdvTradeFillsRequest,
-  GetAdvTradeMarketTradesRequest,
-  GetAdvTradeOrdersRequest,
-  GetAdvTradeProductCandlesRequest,
-  GetAdvTradeProductsRequest,
-  GetAdvTradePublicMarketTradesRequest,
-  GetAdvTradePublicProductCandlesRequest,
-  GetAdvTradePublicProductsRequest,
-  GetAdvTradeTransactionSummaryRequest,
-  MoveAdvTradePortfolioFundsRequest,
-  PreviewAdvTradeOrderRequest,
-  SubmitAdvTradeConvertQuoteRequest,
-  SubmitAdvTradeOrderRequest,
-  UpdateAdvTradeOrderRequest,
-} from './types/request/advanced-trade-client.js';
+  REST_CLIENT_TYPE_ENUM,
+  RestClientOptions,
+  RestClientType,
+} from './lib/requestUtils.js';
 import {
-  AdvTradeAccount,
-  AdvTradeAccountsList,
-  AdvTradeApiKeyPermissions,
-  AdvTradeCancelOrdersResponse,
-  AdvTradeCandle,
-  AdvTradeClosePositionResponse,
-  AdvTradeCurrentMarginWindow,
-  AdvTradeEditOrderPreviewResponse,
-  AdvTradeEditOrderResponse,
-  AdvTradeFill,
-  AdvTradeFuturesBalance,
-  AdvTradeFuturesPosition,
-  AdvTradeFuturesSweep,
-  AdvTradeMarketTrades,
-  AdvTradeOrder,
-  AdvTradeOrderPreview,
-  AdvTradePaymentMethod,
-  AdvTradePerpetualsPortfolio,
-  AdvTradePerpetualsPosition,
-  AdvTradePerpetualsPositionSummary,
-  AdvTradePortfolio,
-  AdvTradePortfolioBalance,
-  AdvTradePortfolioBreakdown,
-  AdvTradePricebook,
-  AdvTradeProduct,
-  AdvTradePublicProduct,
-  AdvTradeSubmitOrderResponse,
-  AdvTradeTransactionSummary,
-} from './types/response/advanced-trade-client.js';
+  AdvTradeGlobalAuthRequest,
+  AdvTradeGlobalCancelAllByCurrencyPairRequest,
+  AdvTradeGlobalCancelAllByCurrencyRequest,
+  AdvTradeGlobalCancelAllByInstrumentRequest,
+  AdvTradeGlobalCancelAllByKindOrTypeRequest,
+  AdvTradeGlobalCancelAllRequest,
+  AdvTradeGlobalCancelByLabelRequest,
+  AdvTradeGlobalCancelRequest,
+  AdvTradeGlobalChangeMarginModelRequest,
+  AdvTradeGlobalClosePositionRequest,
+  AdvTradeGlobalCreateComboRequest,
+  AdvTradeGlobalDisableCancelOnDisconnectRequest,
+  AdvTradeGlobalEditByLabelRequest,
+  AdvTradeGlobalEditRequest,
+  AdvTradeGlobalEnableCancelOnDisconnectRequest,
+  AdvTradeGlobalGetAccessLogRequest,
+  AdvTradeGlobalGetAccountSummariesRequest,
+  AdvTradeGlobalGetAccountSummaryRequest,
+  AdvTradeGlobalGetAnnouncementsRequest,
+  AdvTradeGlobalGetBookSummaryByCurrencyRequest,
+  AdvTradeGlobalGetBookSummaryByInstrumentRequest,
+  AdvTradeGlobalGetCancelOnDisconnectRequest,
+  AdvTradeGlobalGetComboDetailsRequest,
+  AdvTradeGlobalGetComboIdsRequest,
+  AdvTradeGlobalGetCombosRequest,
+  AdvTradeGlobalGetContractSizeRequest,
+  AdvTradeGlobalGetDeliveryPricesRequest,
+  AdvTradeGlobalGetExpirationsRequest,
+  AdvTradeGlobalGetFundingChartDataRequest,
+  AdvTradeGlobalGetFundingRateHistoryRequest,
+  AdvTradeGlobalGetFundingRateValueRequest,
+  AdvTradeGlobalGetHistoricalVolatilityRequest,
+  AdvTradeGlobalGetIndexChartDataRequest,
+  AdvTradeGlobalGetIndexPriceNamesRequest,
+  AdvTradeGlobalGetIndexPriceRequest,
+  AdvTradeGlobalGetInstrumentRequest,
+  AdvTradeGlobalGetInstrumentsRequest,
+  AdvTradeGlobalGetLastSettlementsByCurrencyRequest,
+  AdvTradeGlobalGetLastSettlementsByInstrumentRequest,
+  AdvTradeGlobalGetLastTradesByCurrencyAndTimeRequest,
+  AdvTradeGlobalGetLastTradesByCurrencyRequest,
+  AdvTradeGlobalGetLastTradesByInstrumentAndTimeRequest,
+  AdvTradeGlobalGetLastTradesByInstrumentRequest,
+  AdvTradeGlobalGetLegPricesRequest,
+  AdvTradeGlobalGetMarginsRequest,
+  AdvTradeGlobalGetMarkPriceHistoryRequest,
+  AdvTradeGlobalGetOpenOrdersByCurrencyRequest,
+  AdvTradeGlobalGetOpenOrdersByInstrumentRequest,
+  AdvTradeGlobalGetOpenOrdersByLabelRequest,
+  AdvTradeGlobalGetOpenOrdersRequest,
+  AdvTradeGlobalGetOrderBookByInstrumentIdRequest,
+  AdvTradeGlobalGetOrderBookRequest,
+  AdvTradeGlobalGetOrderHistoryByCurrencyRequest,
+  AdvTradeGlobalGetOrderHistoryByInstrumentRequest,
+  AdvTradeGlobalGetOrderMarginByIdsRequest,
+  AdvTradeGlobalGetOrderStateByLabelRequest,
+  AdvTradeGlobalGetOrderStateRequest,
+  AdvTradeGlobalGetPositionRequest,
+  AdvTradeGlobalGetPositionsRequest,
+  AdvTradeGlobalGetSettlementHistoryByCurrencyRequest,
+  AdvTradeGlobalGetSettlementHistoryByInstrumentRequest,
+  AdvTradeGlobalGetSupportedIndexNamesRequest,
+  AdvTradeGlobalGetTickerRequest,
+  AdvTradeGlobalGetTradeVolumesRequest,
+  AdvTradeGlobalGetTradingviewChartDataRequest,
+  AdvTradeGlobalGetTransactionLogRequest,
+  AdvTradeGlobalGetTriggerOrderHistoryRequest,
+  AdvTradeGlobalGetUserTradesByCurrencyAndTimeRequest,
+  AdvTradeGlobalGetUserTradesByCurrencyRequest,
+  AdvTradeGlobalGetUserTradesByInstrumentAndTimeRequest,
+  AdvTradeGlobalGetUserTradesByInstrumentRequest,
+  AdvTradeGlobalGetUserTradesByOrderRequest,
+  AdvTradeGlobalGetVolatilityIndexDataRequest,
+  AdvTradeGlobalPlaceOrderRequest,
+  AdvTradeGlobalSimulatePmeRequest,
+  AdvTradeGlobalSimulatePortfolioRequest,
+  AdvTradeGlobalTestRequest,
+} from './types/request/advanced-trade-global-client.js';
 
 /**
  * REST client for Coinbase's Global Derivatives Advanced Trade API:
  * https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/derivatives/overview
  *
  * Deribit-powered gateway running on the Starbase platform.
+ * JSON-RPC 2.0 at https://drb.coinbase.com/api/v2
  */
 export class CBAdvancedTradeGlobalClient extends BaseRestClient {
-  /**
-   * This method is used to get the latency and time sync between the client and the server.
-   * This is not official API endpoint and is only used for internal testing purposes.
-   * Use this method to check the latency and time sync between the client and the server.
-   * Final values might vary slightly, but it should be within few ms difference.
-   * If you have any suggestions or improvements to this measurement, please create an issue or pull request on GitHub.
-   */
-  async fetchLatencySummary(): Promise<any> {
-    const clientTimeReqStart = Date.now();
-    const serverTime = await this.getServerTime();
-    const clientTimeReqEnd = Date.now();
-    console.log('serverTime', serverTime);
-
-    const serverTimeMs = Number(serverTime.epochMillis);
-    const roundTripTime = clientTimeReqEnd - clientTimeReqStart;
-    const estimatedOneWayLatency = Math.floor(roundTripTime / 2);
-
-    // Adjust server time by adding estimated one-way latency
-    const adjustedServerTime = serverTimeMs + estimatedOneWayLatency;
-
-    // Calculate time difference between adjusted server time and local time
-    const timeDifference = adjustedServerTime - clientTimeReqEnd;
-
-    const result = {
-      localTime: clientTimeReqEnd,
-      serverTime: serverTimeMs,
-      roundTripTime,
-      estimatedOneWayLatency,
-      adjustedServerTime,
-      timeDifference,
-    };
-
-    console.log('Time synchronization results:');
-    console.log(result);
-
-    console.log(
-      `Your approximate latency to exchange server:
-      One way: ${estimatedOneWayLatency}ms.
-      Round trip: ${roundTripTime}ms.
-      `,
-    );
-
-    if (Math.abs(timeDifference) > 500) {
-      console.warn(
-        `WARNING! Time difference between server and client clock is greater than 500ms. It is currently ${timeDifference}ms.
-        Consider adjusting your system clock to avoid unwanted clock sync errors!
-        Visit https://github.com/tiagosiebler/awesome-crypto-examples/wiki/Timestamp-for-this-request-is-outside-of-the-recvWindow for more information`,
-      );
-    } else {
-      console.log(
-        `Time difference between server and client clock is within acceptable range of 500ms. It is currently ${timeDifference}ms.`,
-      );
-    }
-
-    return result;
+  constructor(
+    restClientOptions: RestClientOptions = {},
+    requestOptions: AxiosRequestConfig = {},
+  ) {
+    super(restClientOptions, requestOptions);
+    return this;
   }
 
   getClientType(): RestClientType {
     return REST_CLIENT_TYPE_ENUM.advancedTradeGlobal;
   }
 
-  /**
-   *
-   * Account Endpoints
-   *
-   */
+  private rpcId = 0;
 
   /**
-   * List Accounts
-   *
-   * Get a list of authenticated accounts for the current user.
+   * JSON-RPC POST to /api/v2. Public methods use post, private methods use postPrivate.
+   * Returns the result field. Throws the JSON-RPC error object on error.
    */
-  getAccounts(params?: {
-    limit?: number;
-    cursor?: string;
-    retail_portfolio_id?: string; // deprecated
-  }): Promise<AdvTradeAccountsList> {
-    return this.getPrivate('/api/v3/brokerage/accounts', params);
-  }
+  private call(method: string, params?: object): Promise<any> {
+    const body: {
+      jsonrpc: '2.0';
+      id: number;
+      method: string;
+      params?: object;
+    } = {
+      jsonrpc: '2.0',
+      id: ++this.rpcId,
+      method,
+    };
 
-  /**
-   * Get Account
-   *
-   * Get a list of information about single account, given an account UUID.
-   * Tip: Use List Accounts (getAccounts funcion) to find account UUIDs.
-   */
-  getAccount(params: { account_id: string }): Promise<{
-    account: AdvTradeAccount;
-  }> {
-    return this.getPrivate(`/api/v3/brokerage/accounts/${params.account_id}`);
-  }
+    if (params) {
+      const cleaned: Record<string, unknown> = {};
+      for (const [key, value] of Object.entries(params)) {
+        if (typeof value !== 'undefined') {
+          cleaned[key] = value;
+        }
+      }
+      if (Object.keys(cleaned).length > 0) {
+        body.params = cleaned;
+      }
+    }
 
-  /**
-   *
-   * Products Endpoints
-   *
-   */
+    const pending = method.startsWith('public/')
+      ? this.post('/api/v2', { body })
+      : this.postPrivate('/api/v2', { body });
 
-  /**
-   * Get Best Bid/Ask
-   *
-   * Get the best bid/ask for all products. A subset of all products can be returned instead by using the product_ids input.
-   */
-  getBestBidAsk(params?: { product_ids?: string[] }): Promise<{
-    pricebooks: AdvTradePricebook[];
-  }> {
-    return this.getPrivate('/api/v3/brokerage/best_bid_ask', params);
-  }
-
-  /**
-   * Get Product Book
-   *
-   * Get a list of bids/asks for a single product. The amount of detail shown can be customized with the limit parameter.
-   */
-  getProductBook(params: {
-    product_id: string;
-    limit?: number;
-    aggregation_price_increment?: string;
-  }): Promise<{ pricebook: AdvTradePricebook }> {
-    return this.getPrivate('/api/v3/brokerage/product_book', params);
-  }
-
-  /**
-   * List Products
-   *
-   * Get a list of the available currency pairs for trading.
-   *
-   */
-  getProducts(params?: GetAdvTradeProductsRequest): Promise<{
-    products: AdvTradeProduct[];
-    num_products: number;
-  }> {
-    return this.getPrivate('/api/v3/brokerage/products', params);
-  }
-
-  /**
-   * Get Product
-   *
-   * Get information on a single product by product ID.
-   */
-  getProduct(params: {
-    product_id: string;
-    get_tradability_status?: boolean;
-  }): Promise<AdvTradeProduct> {
-    const { product_id, ...queryParams } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/products/${product_id}`,
-      queryParams,
-    );
-  }
-
-  /**
-   * Get Product Candles
-   *
-   * Get rates for a single product by product ID, grouped in buckets.
-   */
-  getProductCandles(params: GetAdvTradeProductCandlesRequest): Promise<{
-    candles: AdvTradeCandle[];
-  }> {
-    const { product_id, ...queryParams } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/products/${product_id}/candles`,
-      queryParams,
-    );
-  }
-
-  /**
-   * Get Market Trades
-   *
-   * Get snapshot information by product ID about the last trades (ticks) and best bid/ask.
-   */
-  getMarketTrades(
-    params: GetAdvTradeMarketTradesRequest,
-  ): Promise<AdvTradeMarketTrades> {
-    const { product_id, ...queryParams } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/products/${product_id}/ticker`,
-      queryParams,
-    );
-  }
-
-  /**
-   *
-   * Orders Endpoints
-   *
-   */
-
-  /**
-   * Create Order
-   *
-   * Create an order with a specified product_id (asset-pair), side (buy/sell), etc.
-   *
-   */
-  submitOrder(
-    params: SubmitAdvTradeOrderRequest,
-  ): Promise<AdvTradeSubmitOrderResponse> {
-    this.validateOrderId(params, 'client_order_id');
-    return this.postPrivate('/api/v3/brokerage/orders', {
-      body: params,
+    return pending.then((response: any) => {
+      if (response?.error) {
+        throw response.error;
+      }
+      return response?.result;
     });
   }
 
   /**
-   * Cancel Orders
    *
-   * Initiate cancel requests for one or more orders.
-   * The maximum number of order_ids that can be cancelled per request is 100.
-   * This number may be subject to change in emergency, but if a request exceeds the max,
-   * then an InvalidArgument error code will be returned with an error message denoting the limit.
+   * Public
+   *
    */
-  cancelOrders(params: {
-    order_ids: string[];
-  }): Promise<AdvTradeCancelOrdersResponse> {
-    return this.postPrivate('/api/v3/brokerage/orders/batch_cancel', {
-      body: params,
-    });
+
+  /**
+   * Auth
+   *
+   * Exchange a CDP JWT for an access token.
+   *
+   * JSON-RPC: public/auth
+   */
+  auth(params?: AdvTradeGlobalAuthRequest): Promise<any> {
+    return this.call('public/auth', params);
   }
 
   /**
-   * Edit Order
+   * Get Announcements
    *
-   * Edit an order with a specified new size, or new price.
+   * Platform notices.
    *
-   * - Your request moves to the back of the queue if you increase the size or increase or decrease the price.
-   * - If you decrease the size, you keep your place in line.
-   * - A client can only send an Edit Order request after the previous request for the same order has been fully processed.
+   * JSON-RPC: public/get_announcements
    */
-  updateOrder(
-    params: UpdateAdvTradeOrderRequest,
-  ): Promise<AdvTradeEditOrderResponse> {
-    return this.postPrivate('/api/v3/brokerage/orders/edit', {
-      body: params,
-    });
+  getAnnouncements(
+    params?: AdvTradeGlobalGetAnnouncementsRequest,
+  ): Promise<any> {
+    return this.call('public/get_announcements', params);
   }
 
   /**
-   * Edit Order Preview
+   * Get Block RFQ Trades
    *
-   * Preview an edit order request with a specified new size, or new price.
+   * Public Block RFQ trades.
    *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: public/get_block_rfq_trades
    */
-  updateOrderPreview(
-    params: UpdateAdvTradeOrderRequest,
-  ): Promise<AdvTradeEditOrderPreviewResponse> {
-    return this.postPrivate('/api/v3/brokerage/orders/edit_preview', {
-      body: params,
-    });
+  getBlockRfqTrades(params?: any): Promise<any> {
+    return this.call('public/get_block_rfq_trades', params);
   }
 
   /**
-   * List Orders
+   * Get Book Summary By Currency
    *
-   * Get a list of orders filtered by optional query parameters.
+   * Book summary for a currency.
    *
-   * - The maximum number of OPEN orders returned is 1000.
-   * - The parameters start_date and end_date don't apply to open orders.
-   * - You cannot pair open orders with other order types.
-   * - You cannot query for OPEN orders with other order types.
+   * JSON-RPC: public/get_book_summary_by_currency
    */
-  getOrders(params?: GetAdvTradeOrdersRequest): Promise<{
-    orders: AdvTradeOrder[];
-    sequence?: number;
-    has_next: boolean;
-    cursor?: string;
-  }> {
-    return this.getPrivate('/api/v3/brokerage/orders/historical/batch', params);
+  getBookSummaryByCurrency(
+    params: AdvTradeGlobalGetBookSummaryByCurrencyRequest,
+  ): Promise<any> {
+    return this.call('public/get_book_summary_by_currency', params);
   }
 
   /**
-   * List Fills
+   * Get Book Summary By Instrument
    *
-   * Get a list of fills filtered by optional query parameters (product_id, order_id, etc).
+   * Book summary for one instrument.
    *
+   * JSON-RPC: public/get_book_summary_by_instrument
    */
-  getFills(params?: GetAdvTradeFillsRequest): Promise<{
-    fills: AdvTradeFill[];
-    cursor?: string;
-  }> {
-    return this.getPrivate('/api/v3/brokerage/orders/historical/fills', params);
+  getBookSummaryByInstrument(
+    params: AdvTradeGlobalGetBookSummaryByInstrumentRequest,
+  ): Promise<any> {
+    return this.call('public/get_book_summary_by_instrument', params);
   }
 
   /**
-   * Get Order
+   * Get Combo Details
    *
-   * Get a single order by order ID.
+   * One combo's structure and state.
+   *
+   * JSON-RPC: public/get_combo_details
    */
-  getOrder(params: {
-    order_id: string;
-    client_order_id?: string;
-    user_native_currency?: string;
-  }): Promise<{ order: AdvTradeOrder }> {
-    const { order_id, ...queryParams } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/orders/historical/${order_id}`,
-      queryParams,
-    );
+  getComboDetails(params: AdvTradeGlobalGetComboDetailsRequest): Promise<any> {
+    return this.call('public/get_combo_details', params);
   }
 
   /**
-   * Preview Order
+   * Get Combo Ids
    *
-   * Preview an order.
+   * Available combo IDs.
+   *
+   * JSON-RPC: public/get_combo_ids
+   */
+  getComboIds(params: AdvTradeGlobalGetComboIdsRequest): Promise<any> {
+    return this.call('public/get_combo_ids', params);
+  }
+
+  /**
+   * Get Combos
+   *
+   * Active combos for a currency.
+   *
+   * JSON-RPC: public/get_combos
+   */
+  getCombos(params: AdvTradeGlobalGetCombosRequest): Promise<any> {
+    return this.call('public/get_combos', params);
+  }
+
+  /**
+   * Get Contract Size
+   *
+   * Contract size for an instrument.
+   *
+   * JSON-RPC: public/get_contract_size
+   */
+  getContractSize(params: AdvTradeGlobalGetContractSizeRequest): Promise<any> {
+    return this.call('public/get_contract_size', params);
+  }
+
+  /**
+   * Get Currencies
+   *
+   * Supported currencies.
+   *
+   * JSON-RPC: public/get_currencies
+   */
+  getCurrencies(): Promise<any> {
+    return this.call('public/get_currencies');
+  }
+
+  /**
+   * Get Delivery Prices
+   *
+   * Historical delivery prices for an index.
+   *
+   * JSON-RPC: public/get_delivery_prices
+   */
+  getDeliveryPrices(
+    params: AdvTradeGlobalGetDeliveryPricesRequest,
+  ): Promise<any> {
+    return this.call('public/get_delivery_prices', params);
+  }
+
+  /**
+   * Get Expirations
+   *
+   * Expiration timestamps.
+   *
+   * JSON-RPC: public/get_expirations
+   */
+  getExpirations(params: AdvTradeGlobalGetExpirationsRequest): Promise<any> {
+    return this.call('public/get_expirations', params);
+  }
+
+  /**
+   * Get Funding Chart Data
+   *
+   * Funding-rate chart for a perpetual.
+   *
+   * JSON-RPC: public/get_funding_chart_data
+   */
+  getFundingChartData(
+    params: AdvTradeGlobalGetFundingChartDataRequest,
+  ): Promise<any> {
+    return this.call('public/get_funding_chart_data', params);
+  }
+
+  /**
+   * Get Funding Rate History
+   *
+   * Hourly funding-rate history.
+   *
+   * JSON-RPC: public/get_funding_rate_history
+   */
+  getFundingRateHistory(
+    params: AdvTradeGlobalGetFundingRateHistoryRequest,
+  ): Promise<any> {
+    return this.call('public/get_funding_rate_history', params);
+  }
+
+  /**
+   * Get Funding Rate Value
+   *
+   * Funding rate over a period.
+   *
+   * JSON-RPC: public/get_funding_rate_value
+   */
+  getFundingRateValue(
+    params: AdvTradeGlobalGetFundingRateValueRequest,
+  ): Promise<any> {
+    return this.call('public/get_funding_rate_value', params);
+  }
+
+  /**
+   * Get Historical Volatility
+   *
+   * Historical volatility.
+   *
+   * JSON-RPC: public/get_historical_volatility
+   */
+  getHistoricalVolatility(
+    params: AdvTradeGlobalGetHistoricalVolatilityRequest,
+  ): Promise<any> {
+    return this.call('public/get_historical_volatility', params);
+  }
+
+  /**
+   * Get Index Chart Data
+   *
+   * Index price chart.
+   *
+   * JSON-RPC: public/get_index_chart_data
+   */
+  getIndexChartData(
+    params: AdvTradeGlobalGetIndexChartDataRequest,
+  ): Promise<any> {
+    return this.call('public/get_index_chart_data', params);
+  }
+
+  /**
+   * Get Index Price
+   *
+   * Current index price.
+   *
+   * JSON-RPC: public/get_index_price
+   */
+  getIndexPrice(params: AdvTradeGlobalGetIndexPriceRequest): Promise<any> {
+    return this.call('public/get_index_price', params);
+  }
+
+  /**
+   * Get Index Price Names
+   *
+   * Index names.
+   *
+   * JSON-RPC: public/get_index_price_names
+   */
+  getIndexPriceNames(
+    params?: AdvTradeGlobalGetIndexPriceNamesRequest,
+  ): Promise<any> {
+    return this.call('public/get_index_price_names', params);
+  }
+
+  /**
+   * Get Instrument
+   *
+   * One instrument.
+   *
+   * JSON-RPC: public/get_instrument
+   */
+  getInstrument(params: AdvTradeGlobalGetInstrumentRequest): Promise<any> {
+    return this.call('public/get_instrument', params);
+  }
+
+  /**
+   * Get Instruments
+   *
+   * Tradable instruments.
+   *
+   * Replaces GET /products
+   *
+   * JSON-RPC: public/get_instruments
+   */
+  getInstruments(params: AdvTradeGlobalGetInstrumentsRequest): Promise<any> {
+    return this.call('public/get_instruments', params);
+  }
+
+  /**
+   * Get Last Settlements By Currency
+   *
+   * Settlements for a currency.
+   *
+   * JSON-RPC: public/get_last_settlements_by_currency
+   */
+  getLastSettlementsByCurrency(
+    params: AdvTradeGlobalGetLastSettlementsByCurrencyRequest,
+  ): Promise<any> {
+    return this.call('public/get_last_settlements_by_currency', params);
+  }
+
+  /**
+   * Get Last Settlements By Instrument
+   *
+   * Settlements for one instrument.
+   *
+   * JSON-RPC: public/get_last_settlements_by_instrument
+   */
+  getLastSettlementsByInstrument(
+    params: AdvTradeGlobalGetLastSettlementsByInstrumentRequest,
+  ): Promise<any> {
+    return this.call('public/get_last_settlements_by_instrument', params);
+  }
+
+  /**
+   * Get Last Trades By Currency
+   *
+   * Public trades for a currency.
+   *
+   * JSON-RPC: public/get_last_trades_by_currency
+   */
+  getLastTradesByCurrency(
+    params: AdvTradeGlobalGetLastTradesByCurrencyRequest,
+  ): Promise<any> {
+    return this.call('public/get_last_trades_by_currency', params);
+  }
+
+  /**
+   * Get Last Trades By Currency And Time
+   *
+   * Public trades for a currency, time range.
+   *
+   * JSON-RPC: public/get_last_trades_by_currency_and_time
+   */
+  getLastTradesByCurrencyAndTime(
+    params: AdvTradeGlobalGetLastTradesByCurrencyAndTimeRequest,
+  ): Promise<any> {
+    return this.call('public/get_last_trades_by_currency_and_time', params);
+  }
+
+  /**
+   * Get Last Trades By Instrument
+   *
+   * Public trades for one instrument.
+   *
+   * JSON-RPC: public/get_last_trades_by_instrument
+   */
+  getLastTradesByInstrument(
+    params: AdvTradeGlobalGetLastTradesByInstrumentRequest,
+  ): Promise<any> {
+    return this.call('public/get_last_trades_by_instrument', params);
+  }
+
+  /**
+   * Get Last Trades By Instrument And Time
+   *
+   * Public trades for one instrument, time range.
+   *
+   * JSON-RPC: public/get_last_trades_by_instrument_and_time
+   */
+  getLastTradesByInstrumentAndTime(
+    params: AdvTradeGlobalGetLastTradesByInstrumentAndTimeRequest,
+  ): Promise<any> {
+    return this.call('public/get_last_trades_by_instrument_and_time', params);
+  }
+
+  /**
+   * Get Mark Price History
+   *
+   * 5-minute mark-price history.
+   *
+   * JSON-RPC: public/get_mark_price_history
+   */
+  getMarkPriceHistory(
+    params: AdvTradeGlobalGetMarkPriceHistoryRequest,
+  ): Promise<any> {
+    return this.call('public/get_mark_price_history', params);
+  }
+
+  /**
+   * Get Order Book
+   *
+   * Order book.
+   *
+   * Replaces GET /product_book
+   *
+   * JSON-RPC: public/get_order_book
+   */
+  getOrderBook(params: AdvTradeGlobalGetOrderBookRequest): Promise<any> {
+    return this.call('public/get_order_book', params);
+  }
+
+  /**
+   * Get Order Book By Instrument Id
+   *
+   * Order book by instrument ID.
+   *
+   * JSON-RPC: public/get_order_book_by_instrument_id
+   */
+  getOrderBookByInstrumentId(
+    params: AdvTradeGlobalGetOrderBookByInstrumentIdRequest,
+  ): Promise<any> {
+    return this.call('public/get_order_book_by_instrument_id', params);
+  }
+
+  /**
+   * Get Supported Index Names
+   *
+   * Supported index names.
+   *
+   * JSON-RPC: public/get_supported_index_names
+   */
+  getSupportedIndexNames(
+    params?: AdvTradeGlobalGetSupportedIndexNamesRequest,
+  ): Promise<any> {
+    return this.call('public/get_supported_index_names', params);
+  }
+
+  /**
+   * Get Time
+   *
+   * Server time.
+   *
+   * JSON-RPC: public/get_time
+   */
+  getTime(): Promise<any> {
+    return this.call('public/get_time');
+  }
+
+  /**
+   * Get Trade Volumes
+   *
+   * 24h trade volumes.
+   *
+   * JSON-RPC: public/get_trade_volumes
+   */
+  getTradeVolumes(params?: AdvTradeGlobalGetTradeVolumesRequest): Promise<any> {
+    return this.call('public/get_trade_volumes', params);
+  }
+
+  /**
+   * Get Tradingview Chart Data
+   *
+   * Candle data.
+   *
+   * Replaces GET /products/{product_id}/candles
+   *
+   * JSON-RPC: public/get_tradingview_chart_data
+   */
+  getTradingviewChartData(
+    params: AdvTradeGlobalGetTradingviewChartDataRequest,
+  ): Promise<any> {
+    return this.call('public/get_tradingview_chart_data', params);
+  }
+
+  /**
+   * Get Volatility Index Data
+   *
+   * Volatility-index candles.
+   *
+   * JSON-RPC: public/get_volatility_index_data
+   */
+  getVolatilityIndexData(
+    params: AdvTradeGlobalGetVolatilityIndexDataRequest,
+  ): Promise<any> {
+    return this.call('public/get_volatility_index_data', params);
+  }
+
+  /**
+   * Get Status
+   *
+   * Locked currencies.
+   *
+   * JSON-RPC: public/status
+   */
+  getStatus(): Promise<any> {
+    return this.call('public/status');
+  }
+
+  /**
+   * Test
+   *
+   * Connection test and server version.
+   *
+   * JSON-RPC: public/test
+   */
+  test(params?: AdvTradeGlobalTestRequest): Promise<any> {
+    return this.call('public/test', params);
+  }
+
+  /**
+   * Get Ticker
+   *
+   * 24h ticker.
+   *
+   * Replaces GET /best_bid_ask
+   *
+   * JSON-RPC: public/ticker
+   */
+  getTicker(params: AdvTradeGlobalGetTickerRequest): Promise<any> {
+    return this.call('public/ticker', params);
+  }
+
+  /**
+   *
+   * Private
    *
    */
-  previewOrder(
-    params: PreviewAdvTradeOrderRequest,
-  ): Promise<AdvTradeOrderPreview> {
-    return this.postPrivate('/api/v3/brokerage/orders/preview', {
-      body: params,
-    });
+
+  /**
+   * Buy
+   *
+   * Place a buy order.
+   *
+   * Replaces POST /orders. Side is the method.
+   *
+   * JSON-RPC: private/buy
+   */
+  buy(params: AdvTradeGlobalPlaceOrderRequest): Promise<any> {
+    return this.call('private/buy', params);
+  }
+
+  /**
+   * Sell
+   *
+   * Place a sell order.
+   *
+   * Replaces POST /orders. Side is the method.
+   *
+   * JSON-RPC: private/sell
+   */
+  sell(params: AdvTradeGlobalPlaceOrderRequest): Promise<any> {
+    return this.call('private/sell', params);
+  }
+
+  /**
+   * Edit
+   *
+   * Edit an order.
+   *
+   * Replaces POST /orders/edit
+   *
+   * JSON-RPC: private/edit
+   */
+  edit(params: AdvTradeGlobalEditRequest): Promise<any> {
+    return this.call('private/edit', params);
+  }
+
+  /**
+   * Edit By Label
+   *
+   * Edit an order by label.
+   *
+   * Replaces POST /orders/edit
+   *
+   * JSON-RPC: private/edit_by_label
+   */
+  editByLabel(params: AdvTradeGlobalEditByLabelRequest): Promise<any> {
+    return this.call('private/edit_by_label', params);
+  }
+
+  /**
+   * Cancel
+   *
+   * Cancel one order.
+   *
+   * Replaces POST /orders/batch_cancel
+   *
+   * JSON-RPC: private/cancel
+   */
+  cancel(params: AdvTradeGlobalCancelRequest): Promise<any> {
+    return this.call('private/cancel', params);
+  }
+
+  /**
+   * Cancel By Label
+   *
+   * Cancel orders by label.
+   *
+   * Replaces POST /orders/batch_cancel
+   *
+   * JSON-RPC: private/cancel_by_label
+   */
+  cancelByLabel(params: AdvTradeGlobalCancelByLabelRequest): Promise<any> {
+    return this.call('private/cancel_by_label', params);
+  }
+
+  /**
+   * Cancel All
+   *
+   * Cancel all open orders.
+   *
+   * Replaces POST /orders/batch_cancel
+   *
+   * JSON-RPC: private/cancel_all
+   */
+  cancelAll(params?: AdvTradeGlobalCancelAllRequest): Promise<any> {
+    return this.call('private/cancel_all', params);
+  }
+
+  /**
+   * Cancel All By Currency
+   *
+   * Cancel open orders for a currency.
+   *
+   * Replaces POST /orders/batch_cancel
+   *
+   * JSON-RPC: private/cancel_all_by_currency
+   */
+  cancelAllByCurrency(
+    params: AdvTradeGlobalCancelAllByCurrencyRequest,
+  ): Promise<any> {
+    return this.call('private/cancel_all_by_currency', params);
+  }
+
+  /**
+   * Cancel All By Currency Pair
+   *
+   * Cancel open orders for a currency pair.
+   *
+   * Replaces POST /orders/batch_cancel
+   *
+   * JSON-RPC: private/cancel_all_by_currency_pair
+   */
+  cancelAllByCurrencyPair(
+    params: AdvTradeGlobalCancelAllByCurrencyPairRequest,
+  ): Promise<any> {
+    return this.call('private/cancel_all_by_currency_pair', params);
+  }
+
+  /**
+   * Cancel All By Instrument
+   *
+   * Cancel open orders for an instrument.
+   *
+   * Replaces POST /orders/batch_cancel
+   *
+   * JSON-RPC: private/cancel_all_by_instrument
+   */
+  cancelAllByInstrument(
+    params: AdvTradeGlobalCancelAllByInstrumentRequest,
+  ): Promise<any> {
+    return this.call('private/cancel_all_by_instrument', params);
+  }
+
+  /**
+   * Cancel All By Kind Or Type
+   *
+   * Cancel open orders by kind or type.
+   *
+   * Replaces POST /orders/batch_cancel
+   *
+   * JSON-RPC: private/cancel_all_by_kind_or_type
+   */
+  cancelAllByKindOrType(
+    params: AdvTradeGlobalCancelAllByKindOrTypeRequest,
+  ): Promise<any> {
+    return this.call('private/cancel_all_by_kind_or_type', params);
   }
 
   /**
    * Close Position
    *
-   * Places an order to close any open positions for a specified product_id.
+   * Close a position.
    *
+   * Replaces POST /orders/close_position
+   *
+   * JSON-RPC: private/close_position
    */
-  closePosition(
-    params: CloseAdvTradePositionRequest,
-  ): Promise<AdvTradeClosePositionResponse> {
-    this.validateOrderId(params, 'client_order_id');
-    return this.postPrivate('/api/v3/brokerage/orders/close_position', {
-      body: params,
-    });
+  closePosition(params: AdvTradeGlobalClosePositionRequest): Promise<any> {
+    return this.call('private/close_position', params);
   }
 
   /**
+   * Get Open Orders
    *
-   * Portfolios Endpoints
+   * All open orders.
    *
+   * JSON-RPC: private/get_open_orders
    */
-
-  /**
-   * List Portfolios
-   *
-   * Get all portfolios of a user.
-   */
-  getPortfolios(params?: {
-    portfolio_type?: 'UNDEFINED' | 'DEFAULT' | 'CONSUMER' | 'INTX';
-  }): Promise<{
-    portfolios: AdvTradePortfolio[];
-  }> {
-    return this.getPrivate('/api/v3/brokerage/portfolios', params);
+  getOpenOrders(params?: AdvTradeGlobalGetOpenOrdersRequest): Promise<any> {
+    return this.call('private/get_open_orders', params);
   }
 
   /**
-   * Create Portfolio
+   * Get Open Orders By Currency
    *
-   * Create a portfolio.
+   * Open orders for a currency.
+   *
+   * JSON-RPC: private/get_open_orders_by_currency
    */
-  createPortfolio(params: { name: string }): Promise<{
-    portfolio: AdvTradePortfolio;
-  }> {
-    return this.postPrivate('/api/v3/brokerage/portfolios', {
-      body: params,
-    });
+  getOpenOrdersByCurrency(
+    params: AdvTradeGlobalGetOpenOrdersByCurrencyRequest,
+  ): Promise<any> {
+    return this.call('private/get_open_orders_by_currency', params);
   }
 
   /**
-   * Move Portfolio Funds
+   * Get Open Orders By Instrument
    *
-   * Move funds between portfolios.
+   * Open orders for an instrument.
+   *
+   * JSON-RPC: private/get_open_orders_by_instrument
    */
-  movePortfolioFunds(params: MoveAdvTradePortfolioFundsRequest): Promise<{
-    source_portfolio_uuid: string;
-    target_portfolio_uuid: string;
-  }> {
-    return this.postPrivate('/api/v3/brokerage/portfolios/move_funds', {
-      body: params,
-    });
+  getOpenOrdersByInstrument(
+    params: AdvTradeGlobalGetOpenOrdersByInstrumentRequest,
+  ): Promise<any> {
+    return this.call('private/get_open_orders_by_instrument', params);
   }
 
   /**
-   * Get Portfolio Breakdown
+   * Get Open Orders By Label
    *
-   * Get the breakdown of a portfolio.
+   * Open orders by label.
+   *
+   * JSON-RPC: private/get_open_orders_by_label
    */
-  getPortfolioBreakdown(params: {
-    portfolio_uuid: string;
-    currency?: string;
-  }): Promise<{ breakdown: AdvTradePortfolioBreakdown }> {
-    const { portfolio_uuid, ...queryParams } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/portfolios/${portfolio_uuid}`,
-      queryParams,
-    );
+  getOpenOrdersByLabel(
+    params: AdvTradeGlobalGetOpenOrdersByLabelRequest,
+  ): Promise<any> {
+    return this.call('private/get_open_orders_by_label', params);
   }
 
   /**
-   * Delete Portfolio
+   * Get Order State
    *
-   * Delete a portfolio.
+   * One order.
+   *
+   * Replaces GET /orders/historical/{order_id}
+   *
+   * JSON-RPC: private/get_order_state
    */
-  deletePortfolio(params: { portfolio_uuid: string }): Promise<any> {
-    const { portfolio_uuid } = params;
-    return this.deletePrivate(`/api/v3/brokerage/portfolios/${portfolio_uuid}`);
+  getOrderState(params: AdvTradeGlobalGetOrderStateRequest): Promise<any> {
+    return this.call('private/get_order_state', params);
   }
 
   /**
-   * Edit Portfolio
+   * Get Order State By Label
    *
-   * Edit a portfolio.
+   * Recent orders by label.
    *
+   * JSON-RPC: private/get_order_state_by_label
    */
-  updatePortfolio(params: {
-    portfolio_uuid: string;
-    name: string;
-  }): Promise<{ portfolio: AdvTradePortfolio }> {
-    const { portfolio_uuid, ...bodyParams } = params;
-    return this.putPrivate(`/api/v3/brokerage/portfolios/${portfolio_uuid}`, {
-      body: bodyParams,
-    });
+  getOrderStateByLabel(
+    params: AdvTradeGlobalGetOrderStateByLabelRequest,
+  ): Promise<any> {
+    return this.call('private/get_order_state_by_label', params);
   }
 
   /**
+   * Get Order History By Currency
    *
-   * Futures Endpoints
+   * Order history for a currency.
    *
+   * Replaces GET /orders/historical/batch
+   *
+   * JSON-RPC: private/get_order_history_by_currency
    */
-
-  /**
-   * Get Futures Balance Summary
-   *
-   * Get a summary of balances for CFM trading.
-   *
-   * Futures vs Spot Accounts:
-   * - Futures and spot balances are held in different accounts.
-   * - Cash is always deposited into your Coinbase Inc. (CBI) spot account.
-   * - Cash is automatically transferred to your Coinbase Financial Markets (CFM) futures account to satisfy margin requirements.
-   * - You can transfer cash that isn't being used to margin or maintain futures positions into your CBI spot account.
-   * - Funds held in a CBI spot account do not receive the preferential treatment given to funds held in a regulated futures account.
-   *
-   * Intraday vs. Overnight Margin Health:
-   * - If you are opted in to receive increased leverage on futures trades during the intraday window (from 8am-4pm ET), this endpoint will return your intraday and overnight margin health.
-   */
-  getFuturesBalanceSummary(): Promise<{
-    balance_summary: AdvTradeFuturesBalance;
-  }> {
-    return this.getPrivate('/api/v3/brokerage/cfm/balance_summary');
+  getOrderHistoryByCurrency(
+    params: AdvTradeGlobalGetOrderHistoryByCurrencyRequest,
+  ): Promise<any> {
+    return this.call('private/get_order_history_by_currency', params);
   }
 
   /**
-   * Get Intraday Margin Setting
+   * Get Order History By Instrument
    *
-   * Get the futures intraday margin setting.
+   * Order history for an instrument.
+   *
+   * Replaces GET /orders/historical/batch
+   *
+   * JSON-RPC: private/get_order_history_by_instrument
    */
-  getIntradayMarginSetting(): Promise<{
-    setting:
-      | 'INTRADAY_MARGIN_SETTING_UNSPECIFIED'
-      | 'INTRADAY_MARGIN_SETTING_STANDARD'
-      | 'INTRADAY_MARGIN_SETTING_INTRADAY';
-  }> {
-    return this.getPrivate('/api/v3/brokerage/cfm/intraday/margin_setting');
+  getOrderHistoryByInstrument(
+    params: AdvTradeGlobalGetOrderHistoryByInstrumentRequest,
+  ): Promise<any> {
+    return this.call('private/get_order_history_by_instrument', params);
   }
 
   /**
-   * Set Intraday Margin Setting
+   * Get Order Margin By Ids
    *
-   * Set the futures intraday margin setting.
+   * Initial margin for orders.
+   *
+   * JSON-RPC: private/get_order_margin_by_ids
    */
-  setIntradayMarginSetting(params?: {
-    setting?:
-      | 'INTRADAY_MARGIN_SETTING_UNSPECIFIED'
-      | 'INTRADAY_MARGIN_SETTING_STANDARD'
-      | 'INTRADAY_MARGIN_SETTING_INTRADAY';
-  }): Promise<any> {
-    return this.postPrivate('/api/v3/brokerage/cfm/intraday/margin_setting', {
-      body: params,
-    });
+  getOrderMarginByIds(
+    params: AdvTradeGlobalGetOrderMarginByIdsRequest,
+  ): Promise<any> {
+    return this.call('private/get_order_margin_by_ids', params);
   }
 
   /**
-   * Get Current Margin Window
+   * Get Trigger Order History
    *
-   * Get the futures current margin window.
+   * Trigger-order history.
+   *
+   * JSON-RPC: private/get_trigger_order_history
    */
-  getCurrentMarginWindow(params?: {
-    margin_profile_type?:
-      | 'MARGIN_PROFILE_TYPE_UNSPECIFIED'
-      | 'MARGIN_PROFILE_TYPE_RETAIL_REGULAR'
-      | 'MARGIN_PROFILE_TYPE_RETAIL_INTRADAY_MARGIN_1';
-  }): Promise<AdvTradeCurrentMarginWindow> {
-    return this.getPrivate(
-      '/api/v3/brokerage/cfm/intraday/current_margin_window',
-      params,
-    );
+  getTriggerOrderHistory(
+    params: AdvTradeGlobalGetTriggerOrderHistoryRequest,
+  ): Promise<any> {
+    return this.call('private/get_trigger_order_history', params);
   }
 
   /**
-   * List Futures Positions
+   * Get User Trades By Currency
    *
-   * Get a list of positions in CFM products.
+   * Fills for a currency.
+   *
+   * Replaces GET /orders/historical/fills
+   *
+   * JSON-RPC: private/get_user_trades_by_currency
    */
-  getFuturesPositions(): Promise<{ positions: AdvTradeFuturesPosition[] }> {
-    return this.getPrivate('/api/v3/brokerage/cfm/positions');
+  getUserTradesByCurrency(
+    params: AdvTradeGlobalGetUserTradesByCurrencyRequest,
+  ): Promise<any> {
+    return this.call('private/get_user_trades_by_currency', params);
   }
 
   /**
-   * Get Futures Position
+   * Get User Trades By Currency And Time
    *
-   * Get positions for a specific CFM product.
+   * Fills for a currency, time range.
+   *
+   * Replaces GET /orders/historical/fills
+   *
+   * JSON-RPC: private/get_user_trades_by_currency_and_time
    */
-  getFuturesPosition(params: {
-    product_id: string;
-  }): Promise<{ position: AdvTradeFuturesPosition }> {
-    const { product_id } = params;
-    return this.getPrivate(`/api/v3/brokerage/cfm/positions/${product_id}`);
+  getUserTradesByCurrencyAndTime(
+    params: AdvTradeGlobalGetUserTradesByCurrencyAndTimeRequest,
+  ): Promise<any> {
+    return this.call('private/get_user_trades_by_currency_and_time', params);
   }
 
   /**
-   * Schedule Futures Sweep
+   * Get User Trades By Instrument
    *
-   * Schedules a sweep of funds from FCM wallet to USD Spot wallet.
+   * Fills for an instrument.
    *
-   * Futures Sweep Processing:
-   * - Sweep requests submitted before 5PM ET each day are processed the following business day.
-   * - Sweep requests submitted after 5PM ET each day are processed in 2 business days.
-   * - You can have at most one pending sweep request at a time.
+   * Replaces GET /orders/historical/fills
    *
-   * Market movements related to your open positions may impact the final amount that is transferred into your spot account.
-   * The final funds transferred, up to your specified amount, depend on the available excess in your futures account.
+   * JSON-RPC: private/get_user_trades_by_instrument
    */
-  scheduleFuturesSweep(params?: {
-    usd_amount?: string;
-  }): Promise<{ success: boolean }> {
-    return this.postPrivate('/api/v3/brokerage/cfm/sweeps/schedule', {
-      body: params,
-    });
+  getUserTradesByInstrument(
+    params: AdvTradeGlobalGetUserTradesByInstrumentRequest,
+  ): Promise<any> {
+    return this.call('private/get_user_trades_by_instrument', params);
   }
 
   /**
-   * List Futures Sweeps
+   * Get User Trades By Instrument And Time
    *
-   * Get pending and processing sweeps of funds from FCM wallet to USD Spot wallet.
+   * Fills for an instrument, time range.
    *
-   * Pending vs. Processing Sweeps:
-   * - A pending sweep is a sweep that has not started processing and can be cancelled.
-   * - A processing sweep is a sweep that is currently being processed and cannot be cancelled.
-   * - Once a sweep is complete, it no longer appears in the list of sweeps.
+   * Replaces GET /orders/historical/fills
+   *
+   * JSON-RPC: private/get_user_trades_by_instrument_and_time
    */
-  getFuturesSweeps(): Promise<{ sweeps: AdvTradeFuturesSweep[] }> {
-    return this.getPrivate('/api/v3/brokerage/cfm/sweeps');
+  getUserTradesByInstrumentAndTime(
+    params: AdvTradeGlobalGetUserTradesByInstrumentAndTimeRequest,
+  ): Promise<any> {
+    return this.call('private/get_user_trades_by_instrument_and_time', params);
   }
 
   /**
-   * Cancel Pending Futures Sweep
+   * Get User Trades By Order
    *
-   * Cancel the pending sweep of funds from FCM wallet to USD Spot wallet.
+   * Fills for one order.
+   *
+   * Replaces GET /orders/historical/fills
+   *
+   * JSON-RPC: private/get_user_trades_by_order
    */
-  cancelPendingFuturesSweep(): Promise<{ success: boolean }> {
-    return this.deletePrivate('/api/v3/brokerage/cfm/sweeps');
+  getUserTradesByOrder(
+    params: AdvTradeGlobalGetUserTradesByOrderRequest,
+  ): Promise<any> {
+    return this.call('private/get_user_trades_by_order', params);
   }
 
   /**
+   * Get Margins
    *
-   * Perpetuals Endpoints
+   * Margin for a hypothetical order.
    *
+   * JSON-RPC: private/get_margins
    */
-
-  /**
-   * Allocate Portfolio
-   *
-   * Allocate portfolio funds to a sub-portfolio on Intx Portfolio.
-   *
-   */
-  allocatePortfolio(params: AllocateAdvTradePortfolioRequest): Promise<any> {
-    return this.postPrivate('/api/v3/brokerage/intx/allocate', {
-      body: params,
-    });
+  getMargins(params: AdvTradeGlobalGetMarginsRequest): Promise<any> {
+    return this.call('private/get_margins', params);
   }
 
   /**
-   * Get Perpetuals Portfolio Summary
+   * Get Account Summaries
    *
-   * Get a summary of your Perpetuals portfolio.
+   * Account summaries by currency.
+   *
+   * JSON-RPC: private/get_account_summaries
    */
-  getPerpetualsPortfolioSummary(params: {
-    portfolio_uuid: string;
-  }): Promise<AdvTradePerpetualsPortfolio> {
-    const { portfolio_uuid } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/intx/portfolio/${portfolio_uuid}`,
-    );
+  getAccountSummaries(
+    params?: AdvTradeGlobalGetAccountSummariesRequest,
+  ): Promise<any> {
+    return this.call('private/get_account_summaries', params);
   }
 
   /**
-   * List Perpetuals Positions
+   * Get Account Summary
    *
-   * Get a list of open positions in your Perpetuals portfolio.
+   * Account summary for one currency.
+   *
+   * Replaces GET /intx/portfolio/{portfolio_uuid}
+   *
+   * JSON-RPC: private/get_account_summary
    */
-  getPerpetualsPositions(params: {
-    portfolio_uuid: string;
-  }): Promise<AdvTradePerpetualsPositionSummary> {
-    const { portfolio_uuid } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/intx/positions/${portfolio_uuid}`,
-    );
+  getAccountSummary(
+    params: AdvTradeGlobalGetAccountSummaryRequest,
+  ): Promise<any> {
+    return this.call('private/get_account_summary', params);
   }
 
   /**
-   * Get Perpetuals Position
+   * Get Position
    *
-   * Get a specific open position on Intx.
+   * Position for one instrument.
    *
+   * Replaces GET /intx/positions/{portfolio_uuid}/{symbol}
+   *
+   * JSON-RPC: private/get_position
    */
-  getPerpetualsPosition(params: {
-    portfolio_uuid: string;
-    symbol: string;
-  }): Promise<{ position: AdvTradePerpetualsPosition }> {
-    const { portfolio_uuid, symbol } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/intx/positions/${portfolio_uuid}/${symbol}`,
-    );
+  getPosition(params: AdvTradeGlobalGetPositionRequest): Promise<any> {
+    return this.call('private/get_position', params);
   }
 
   /**
-   * Get Portfolios Balances
+   * Get Positions
    *
-   * Get a list of asset balances on Intx for a given Portfolio.
+   * All open positions.
+   *
+   * Replaces GET /intx/positions/{portfolio_uuid}
+   *
+   * JSON-RPC: private/get_positions
    */
-  getPortfoliosBalances(params: { portfolio_uuid: string }): Promise<{
-    portfolio_balances: AdvTradePortfolioBalance[];
-  }> {
-    const { portfolio_uuid } = params;
-    return this.getPrivate(`/api/v3/brokerage/intx/balances/${portfolio_uuid}`);
+  getPositions(params?: AdvTradeGlobalGetPositionsRequest): Promise<any> {
+    return this.call('private/get_positions', params);
   }
 
   /**
-   * Opt In or Out of Multi Asset Collateral
+   * Change Margin Model
    *
-   * Enable or Disable Multi Asset Collateral for a given Portfolio.
+   * Change the margin model.
+   *
+   * Replaces POST /intx/multi_asset_collateral
+   *
+   * JSON-RPC: private/change_margin_model
    */
-  updateMultiAssetCollateral(params?: {
-    portfolio_uuid?: string;
-    multi_asset_collateral_enabled?: boolean;
-  }): Promise<{ multi_asset_collateral_enabled: boolean }> {
-    return this.postPrivate('/api/v3/brokerage/intx/multi_asset_collateral', {
-      body: params,
-    });
+  changeMarginModel(
+    params: AdvTradeGlobalChangeMarginModelRequest,
+  ): Promise<any> {
+    return this.call('private/change_margin_model', params);
   }
 
   /**
+   * Get Access Log
    *
-   * Fees Endpoints
+   * API access log.
    *
+   * JSON-RPC: private/get_access_log
    */
-
-  /**
-   * Get Transaction Summary
-   *
-   * Get a summary of transactions with fee tiers, total volume, and fees.
-   */
-  getTransactionSummary(
-    params?: GetAdvTradeTransactionSummaryRequest,
-  ): Promise<AdvTradeTransactionSummary> {
-    return this.getPrivate('/api/v3/brokerage/transaction_summary', params);
+  getAccessLog(params?: AdvTradeGlobalGetAccessLogRequest): Promise<any> {
+    return this.call('private/get_access_log', params);
   }
 
   /**
+   * Get Transaction Log
    *
-   * Converts Endpoints
+   * Transaction log.
    *
+   * JSON-RPC: private/get_transaction_log
    */
-
-  /**
-   * Create Convert Quote
-   *
-   * Create a convert quote with a specified source account, target account, and amount.
-   * Convert is applicable for USDC-USD and EURC-EUR conversion.
-   */
-  submitConvertQuote(params: SubmitAdvTradeConvertQuoteRequest): Promise<any> {
-    return this.postPrivate('/api/v3/brokerage/convert/quote', {
-      body: params,
-    });
+  getTransactionLog(
+    params: AdvTradeGlobalGetTransactionLogRequest,
+  ): Promise<any> {
+    return this.call('private/get_transaction_log', params);
   }
 
   /**
-   * Get Convert Trade
+   * Get Settlement History By Currency
    *
-   * Gets a list of information about a convert trade with a specified trade id, source account, and target account.
+   * Settlements for a currency.
+   *
+   * JSON-RPC: private/get_settlement_history_by_currency
    */
-  getConvertTrade(params: {
-    trade_id: string;
-    from_account: string;
-    to_account: string;
-  }): Promise<any> {
-    const { trade_id, ...queryParams } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/convert/trade/${trade_id}`,
-      queryParams,
-    );
+  getSettlementHistoryByCurrency(
+    params: AdvTradeGlobalGetSettlementHistoryByCurrencyRequest,
+  ): Promise<any> {
+    return this.call('private/get_settlement_history_by_currency', params);
   }
 
   /**
-   * Commit Convert Trade
+   * Get Settlement History By Instrument
    *
-   * Commits a convert trade with a specified trade id, source account, and target account.
+   * Settlements for an instrument.
+   *
+   * JSON-RPC: private/get_settlement_history_by_instrument
    */
-  commitConvertTrade(params: {
-    trade_id: string;
-    from_account: string;
-    to_account: string;
-  }): Promise<any> {
-    const { trade_id, ...bodyParams } = params;
-    return this.postPrivate(`/api/v3/brokerage/convert/trade/${trade_id}`, {
-      body: bodyParams,
-    });
+  getSettlementHistoryByInstrument(
+    params: AdvTradeGlobalGetSettlementHistoryByInstrumentRequest,
+  ): Promise<any> {
+    return this.call('private/get_settlement_history_by_instrument', params);
   }
 
   /**
+   * Simulate Portfolio
    *
-   * Public Endpoints
+   * Simulated portfolio margin.
    *
+   * JSON-RPC: private/simulate_portfolio
    */
-
-  getServerTime(): Promise<{
-    iso: string;
-    epochSeconds: string;
-    epochMillis: string;
-  }> {
-    return this.get('/api/v3/brokerage/time');
+  simulatePortfolio(
+    params: AdvTradeGlobalSimulatePortfolioRequest,
+  ): Promise<any> {
+    return this.call('private/simulate_portfolio', params);
   }
 
   /**
-   * Get Public Product Book
+   * Simulate PME
    *
-   * Get a list of bids/asks for a single product. The amount of detail shown can be customized with the limit parameter.
+   * Portfolio-margin risk matrix.
+   *
+   * JSON-RPC: private/pme/simulate
    */
-  getPublicProductBook(params: {
-    product_id: string;
-    limit?: number;
-    aggregation_price_increment?: string;
-  }): Promise<{ pricebook: AdvTradePricebook }> {
-    return this.get('/api/v3/brokerage/market/product_book', params);
+  simulatePme(params: AdvTradeGlobalSimulatePmeRequest): Promise<any> {
+    return this.call('private/pme/simulate', params);
   }
 
   /**
-   * List Public Products
+   * Enable Cancel On Disconnect
    *
-   * Get a list of the available currency pairs for trading.
+   * Enable cancel-on-disconnect.
+   *
+   * JSON-RPC: private/enable_cancel_on_disconnect
    */
-  getPublicProducts(params?: GetAdvTradePublicProductsRequest): Promise<{
-    products: AdvTradePublicProduct[];
-    num_products: number;
-  }> {
-    return this.get('/api/v3/brokerage/market/products', params);
+  enableCancelOnDisconnect(
+    params?: AdvTradeGlobalEnableCancelOnDisconnectRequest,
+  ): Promise<any> {
+    return this.call('private/enable_cancel_on_disconnect', params);
   }
 
   /**
-   * Get Public Product
+   * Disable Cancel On Disconnect
    *
-   * Get information on a single product by product ID.
+   * Disable cancel-on-disconnect.
+   *
+   * JSON-RPC: private/disable_cancel_on_disconnect
    */
-  getPublicProduct(params: {
-    product_id: string;
-  }): Promise<AdvTradePublicProduct> {
-    const { product_id } = params;
-    return this.get(`/api/v3/brokerage/market/products/${product_id}`);
+  disableCancelOnDisconnect(
+    params?: AdvTradeGlobalDisableCancelOnDisconnectRequest,
+  ): Promise<any> {
+    return this.call('private/disable_cancel_on_disconnect', params);
   }
 
   /**
-   * Get Public Product Candles
+   * Get Cancel On Disconnect
    *
-   * Get rates for a single product by product ID, grouped in buckets.
+   * Cancel-on-disconnect setting.
+   *
+   * JSON-RPC: private/get_cancel_on_disconnect
    */
-  getPublicProductCandles(
-    params: GetAdvTradePublicProductCandlesRequest,
-  ): Promise<{ candles: AdvTradeCandle[] }> {
-    const { product_id, ...queryParams } = params;
-    return this.get(
-      `/api/v3/brokerage/market/products/${product_id}/candles`,
-      queryParams,
-    );
+  getCancelOnDisconnect(
+    params?: AdvTradeGlobalGetCancelOnDisconnectRequest,
+  ): Promise<any> {
+    return this.call('private/get_cancel_on_disconnect', params);
   }
 
   /**
-   * Get Public Market Trades
+   * Create Combo
    *
-   * Get snapshot information by product ID about the last trades (ticks) and best bid/ask.
+   * Create a combo.
+   *
+   * JSON-RPC: private/create_combo
    */
-  getPublicMarketTrades(
-    params: GetAdvTradePublicMarketTradesRequest,
-  ): Promise<AdvTradeMarketTrades> {
-    const { product_id, ...queryParams } = params;
-    return this.get(
-      `/api/v3/brokerage/market/products/${product_id}/ticker`,
-      queryParams,
-    );
+  createCombo(params: AdvTradeGlobalCreateComboRequest): Promise<any> {
+    return this.call('private/create_combo', params);
   }
 
   /**
+   * Get Leg Prices
    *
-   * Payment Methods Endpoints
+   * Prices for each instrument in a combo.
    *
+   * JSON-RPC: private/get_leg_prices
    */
-
-  /**
-   * List Payment Methods
-   *
-   * Get a list of payment methods for the current user.
-   */
-  getPaymentMethods(): Promise<{
-    payment_methods: AdvTradePaymentMethod[];
-  }> {
-    return this.getPrivate('/api/v3/brokerage/payment_methods');
+  getLegPrices(params: AdvTradeGlobalGetLegPricesRequest): Promise<any> {
+    return this.call('private/get_leg_prices', params);
   }
 
   /**
-   * Get Payment Method
+   * Create Block RFQ
    *
-   * Get information about a payment method for the current user.
+   * Create a Block RFQ.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/create_block_rfq
    */
-  getPaymentMethod(params: { payment_method_id: string }): Promise<{
-    payment_method: AdvTradePaymentMethod;
-  }> {
-    const { payment_method_id } = params;
-    return this.getPrivate(
-      `/api/v3/brokerage/payment_methods/${payment_method_id}`,
-    );
+  createBlockRfq(params?: any): Promise<any> {
+    return this.call('private/create_block_rfq', params);
   }
 
   /**
+   * Cancel Block RFQ
    *
-   * Data API Endpoints
+   * Cancel a Block RFQ.
    *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/cancel_block_rfq
    */
+  cancelBlockRfq(params?: any): Promise<any> {
+    return this.call('private/cancel_block_rfq', params);
+  }
 
   /**
-   * Get API Key Permissions
+   * Accept Block RFQ
    *
-   * Get information about your CDP API key permissions.
+   * Accept a Block RFQ quote.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/accept_block_rfq
    */
-  getApiKeyPermissions(): Promise<AdvTradeApiKeyPermissions> {
-    return this.getPrivate('/api/v3/brokerage/key_permissions');
+  acceptBlockRfq(params?: any): Promise<any> {
+    return this.call('private/accept_block_rfq', params);
+  }
+
+  /**
+   * Cancel Block RFQ Trigger
+   *
+   * Cancel a Block RFQ trigger.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/cancel_block_rfq_trigger
+   */
+  cancelBlockRfqTrigger(params?: any): Promise<any> {
+    return this.call('private/cancel_block_rfq_trigger', params);
+  }
+
+  /**
+   * Get Block RFQs
+   *
+   * Block RFQs for the user.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/get_block_rfqs
+   */
+  getBlockRfqs(params?: any): Promise<any> {
+    return this.call('private/get_block_rfqs', params);
+  }
+
+  /**
+   * Add Block RFQ Quote
+   *
+   * Quote a Block RFQ.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/add_block_rfq_quote
+   */
+  addBlockRfqQuote(params?: any): Promise<any> {
+    return this.call('private/add_block_rfq_quote', params);
+  }
+
+  /**
+   * Edit Block RFQ Quote
+   *
+   * Edit a Block RFQ quote.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/edit_block_rfq_quote
+   */
+  editBlockRfqQuote(params?: any): Promise<any> {
+    return this.call('private/edit_block_rfq_quote', params);
+  }
+
+  /**
+   * Cancel Block RFQ Quote
+   *
+   * Cancel a Block RFQ quote.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/cancel_block_rfq_quote
+   */
+  cancelBlockRfqQuote(params?: any): Promise<any> {
+    return this.call('private/cancel_block_rfq_quote', params);
+  }
+
+  /**
+   * Cancel All Block RFQ Quotes
+   *
+   * Cancel all Block RFQ quotes.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/cancel_all_block_rfq_quotes
+   */
+  cancelAllBlockRfqQuotes(params?: any): Promise<any> {
+    return this.call('private/cancel_all_block_rfq_quotes', params);
+  }
+
+  /**
+   * Get Block RFQ Quotes
+   *
+   * Open Block RFQ quotes.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/get_block_rfq_quotes
+   */
+  getBlockRfqQuotes(params?: any): Promise<any> {
+    return this.call('private/get_block_rfq_quotes', params);
+  }
+
+  /**
+   * Get Block RFQ Makers
+   *
+   * Available Block RFQ makers.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/get_block_rfq_makers
+   */
+  getBlockRfqMakers(params?: any): Promise<any> {
+    return this.call('private/get_block_rfq_makers', params);
+  }
+
+  /**
+   * Get Block RFQ User Info
+   *
+   * Block RFQ identity and rating.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/get_block_rfq_user_info
+   */
+  getBlockRfqUserInfo(params?: any): Promise<any> {
+    return this.call('private/get_block_rfq_user_info', params);
+  }
+
+  /**
+   * Execute Block Trade
+   *
+   * Execute a block trade.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/execute_block_trade
+   */
+  executeBlockTrade(params?: any): Promise<any> {
+    return this.call('private/execute_block_trade', params);
+  }
+
+  /**
+   * Verify Block Trade
+   *
+   * Verify a block trade.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/verify_block_trade
+   */
+  verifyBlockTrade(params?: any): Promise<any> {
+    return this.call('private/verify_block_trade', params);
+  }
+
+  /**
+   * Approve Block Trade
+   *
+   * Approve a pending block trade.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/approve_block_trade
+   */
+  approveBlockTrade(params?: any): Promise<any> {
+    return this.call('private/approve_block_trade', params);
+  }
+
+  /**
+   * Reject Block Trade
+   *
+   * Reject a pending block trade.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/reject_block_trade
+   */
+  rejectBlockTrade(params?: any): Promise<any> {
+    return this.call('private/reject_block_trade', params);
+  }
+
+  /**
+   * Simulate Block Trade
+   *
+   * Simulate a block trade.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/simulate_block_trade
+   */
+  simulateBlockTrade(params?: any): Promise<any> {
+    return this.call('private/simulate_block_trade', params);
+  }
+
+  /**
+   * Invalidate Block Trade Signature
+   *
+   * Invalidate a block-trade signature.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/invalidate_block_trade_signature
+   */
+  invalidateBlockTradeSignature(params?: any): Promise<any> {
+    return this.call('private/invalidate_block_trade_signature', params);
+  }
+
+  /**
+   * Get Block Trade
+   *
+   * One block trade.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/get_block_trade
+   */
+  getBlockTrade(params?: any): Promise<any> {
+    return this.call('private/get_block_trade', params);
+  }
+
+  /**
+   * Get Block Trades
+   *
+   * The user's block trades.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/get_block_trades
+   */
+  getBlockTrades(params?: any): Promise<any> {
+    return this.call('private/get_block_trades', params);
+  }
+
+  /**
+   * Get Block Trade Requests
+   *
+   * Pending block-trade requests.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/get_block_trade_requests
+   */
+  getBlockTradeRequests(params?: any): Promise<any> {
+    return this.call('private/get_block_trade_requests', params);
+  }
+
+  /**
+   * Get Broker Trades
+   *
+   * Broker block trades.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/get_broker_trades
+   */
+  getBrokerTrades(params?: any): Promise<any> {
+    return this.call('private/get_broker_trades', params);
+  }
+
+  /**
+   * Get Broker Trade Requests
+   *
+   * Broker block-trade requests.
+   *
+   * Request parameters are not in the published OpenAPI spec yet.
+   *
+   * JSON-RPC: private/get_broker_trade_requests
+   */
+  getBrokerTradeRequests(params?: any): Promise<any> {
+    return this.call('private/get_broker_trade_requests', params);
   }
 }
