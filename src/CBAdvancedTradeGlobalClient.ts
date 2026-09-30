@@ -1761,6 +1761,9 @@ export class CBAdvancedTradeGlobalClient extends BaseRestClient {
    * JSON-RPC: private/create_block_rfq
    */
   createBlockRfq(params?: any): Promise<any> {
+    if (params) {
+      this.validateOrderId(params, 'label', 64);
+    }
     return this.call('private/create_block_rfq', params);
   }
 
@@ -1826,6 +1829,9 @@ export class CBAdvancedTradeGlobalClient extends BaseRestClient {
    * JSON-RPC: private/add_block_rfq_quote
    */
   addBlockRfqQuote(params?: any): Promise<any> {
+    if (params) {
+      this.validateOrderId(params, 'label', 64);
+    }
     return this.call('private/add_block_rfq_quote', params);
   }
 
