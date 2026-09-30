@@ -908,6 +908,7 @@ export class CBAdvancedTradeGlobalClient extends BaseRestClient {
   submitBuy(
     params: AdvTradeGlobalPlaceOrderRequest,
   ): Promise<AdvTradeGlobalBuyResult> {
+    this.validateOrderId(params, 'label', 64);
     return this.call('private/buy', params);
   }
 
@@ -930,6 +931,7 @@ export class CBAdvancedTradeGlobalClient extends BaseRestClient {
   submitSell(
     params: AdvTradeGlobalPlaceOrderRequest,
   ): Promise<AdvTradeGlobalSellResult> {
+    this.validateOrderId(params, 'label', 64);
     return this.call('private/sell', params);
   }
 
