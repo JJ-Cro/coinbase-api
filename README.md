@@ -217,6 +217,14 @@ doAPICall();
 
 International derivatives (perpetuals today, options and dated futures after cutover) use [`CBAdvancedTradeGlobalClient`](./src/CBAdvancedTradeGlobalClient.ts). It talks JSON-RPC 2.0 to `https://drb.coinbase.com/api/v2`. Spot and US futures stay on `CBAdvancedTradeClient`.
 
+The table below only says which method replaces which old endpoint. Parameters and responses are not the same shape. The breaks that matter:
+
+- The client returns the JSON-RPC `result` and throws the JSON-RPC `error`. You do not read `result` or `id` off the return value.
+- Prices and sizes are JSON numbers, not decimal strings. `amount: 0.001` is `0.001` of the base coin on these USDC perpetuals.
+- `instrument_name` replaces the old product id. `BTC-PERP-INTX` becomes `BTC_USDC-PERPETUAL`.
+- `label` replaces `client_order_id`. It is not guaranteed unique, so do not use it as an idempotency key.
+- Order type, time in force, and status are lowercase (`limit`, `good_til_cancelled`, `open`), not `LIMIT` or `OPEN`.
+
 Coinbase's source table: [Endpoint mapping](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/derivatives/technical#endpoint-mapping).
 
 | Action                                                           | Current API                         | New API                                  | `CBAdvancedTradeGlobalClient`                                                                                                                                  |
