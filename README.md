@@ -213,7 +213,9 @@ doAPICall();
 
 #### CBAdvancedTradeGlobalClient
 
-International derivatives (perpetuals today, options and dated futures after cutover) use [`CBAdvancedTradeGlobalClient`](./src/CBAdvancedTradeGlobalClient.ts). It talks JSON-RPC 2.0 to `https://drb.coinbase.com/api/v2`. Spot and US futures stay on `CBAdvancedTradeClient`.
+International derivatives REST API endpoints, sometimes referred to as "Advanced Trade Global", are available via the dedicated [`CBAdvancedTradeGlobalClient`](./src/CBAdvancedTradeGlobalClient.ts) class.
+
+Under the hood, it talks JSON-RPC 2.0 to `https://drb.coinbase.com/api/v2`. Spot and US futures stay on `CBAdvancedTradeClient`.
 
 The table below only says which method replaces which old endpoint. Parameters and responses are not the same shape. The breaks that matter:
 
@@ -399,9 +401,11 @@ client.subscribe(
 
 #### Global Derivatives Public WebSocket
 
-Use `advTradeGlobalMarketData` for the Global Derivatives public feed. Pass complete channel names, including their instrument and interval, through the same subscription interface:
+Use `WS_KEY_MAP.advTradeGlobalMarketData` for the Global Derivatives public feed. Pass complete channel names, including their instrument and interval, through the same subscription interface:
 
 ```javascript
+import { WebsocketClient, WS_KEY_MAP } from 'coinbase-api';
+
 const client = new WebsocketClient();
 
 client.on('update', (event) => {
@@ -410,30 +414,34 @@ client.on('update', (event) => {
 
 client.subscribe(
   ['quote.BTC-PERPETUAL', 'ticker.BTC-PERPETUAL.100ms'],
-  'advTradeGlobalMarketData',
+  WS_KEY_MAP.advTradeGlobalMarketData,
 );
 
-// client.unsubscribe('quote.BTC-PERPETUAL', 'advTradeGlobalMarketData');
+// client.unsubscribe('quote.BTC-PERPETUAL', WS_KEY_MAP.advTradeGlobalMarketData);
 ```
 
-No credentials are required. The client handles liveness checks and restores subscribed topics after reconnecting. Updates preserve the JSON-RPC envelope, with data under `params.data`; acknowledgements use `response` and API errors use `exception`. Public intervals are `100ms` and `agg2`; `raw` requires authentication. See the [public example](./examples/AdvancedTradeGlobal/WebSockets/publicWs.ts) and [channel/event types](./src/types/websockets/advanced-trade-global.ts).
+No credentials are required. The client handles liveness checks and restores subscribed topics after reconnecting, if a connection for any reason needs to be automatically replaced. Updates preserve the JSON-RPC envelope, with data under `params.data`; acknowledgements use `response` and API errors use `exception`. Public intervals are `100ms` and `agg2`; `raw` requires authentication. See the [public example](./examples/AdvancedTradeGlobal/WebSockets/publicWs.ts) and [channel/event types](./src/types/websockets/advanced-trade-global.ts).
 
-Global connections open on demand and are excluded from `connectAll()`. To preconnect a Global subscription feed, call `connect('advTradeGlobalMarketData')` or `connect('advTradeGlobalUserData')`. Use `connectWSAPI()` to preconnect and authenticate the Global WS API.
+Global connections open on demand and are excluded from `connectAll()`. To preconnect a Global subscription feed, call `connect(WS_KEY_MAP.advTradeGlobalMarketData)` or `connect(WS_KEY_MAP.advTradeGlobalUserData)`. Use `connectWSAPI()` to preconnect and authenticate the Global WS API.
 
 #### Global Derivatives Private WebSocket
 
-Use `advTradeGlobalUserData` for account, order, trade, position and portfolio updates:
+Use `WS_KEY_MAP.advTradeGlobalUserData` for account, order, trade, position and portfolio updates:
 
 ```javascript
+import { WebsocketClient, WS_KEY_MAP } from 'coinbase-api';
+
 const client = new WebsocketClient({ apiKey, apiSecret });
 
 client.on('authenticated', ({ wsKey }) => console.log('authenticated:', wsKey));
-client.on('update', (event) => console.log(event.params.channel, event.params.data));
+client.on('update', (event) =>
+  console.log(event.params.channel, event.params.data),
+);
 client.on('exception', (event) => console.error(event));
 
 client.subscribe(
   ['user.orders.future.USDC.100ms', 'user.portfolio.USDC'],
-  'advTradeGlobalUserData',
+  WS_KEY_MAP.advTradeGlobalUserData,
 );
 ```
 
@@ -453,18 +461,18 @@ const positions = await client.getPositions({ currency: 'USDC' });
 console.log(time.result, positions.result);
 
 // Alternatively, use the underlying WebsocketClient's typed request interface:
-const response = await client.getWSClient().sendWSAPIRequest(
-  WS_KEY_MAP.advTradeGlobalWSAPI,
-  'private/get_positions',
-  { currency: 'USDC' },
-);
+const response = await client
+  .getWSClient()
+  .sendWSAPIRequest(WS_KEY_MAP.advTradeGlobalWSAPI, 'private/get_positions', {
+    currency: 'USDC',
+  });
 console.log(response.result);
 
 // When finished:
 await client.logout({ invalidate_token: false });
 ```
 
-The dedicated `advTradeGlobalWSAPI` connection uses `wss://drb.coinbase.com/ws/api/v2`. Private calls authenticate automatically, concurrent calls share authentication, and sessions renew before expiry. `connectWSAPI()` optionally warms up an authenticated connection. Reauthentication after reconnect is enabled by default; subscriptions use their existing separate connections.
+The dedicated `WS_KEY_MAP.advTradeGlobalWSAPI` connection uses `wss://drb.coinbase.com/ws/api/v2`. Private calls authenticate automatically, concurrent calls share authentication, and sessions renew before expiry. `connectWSAPI()` optionally warms up an authenticated connection. Reauthentication after reconnect is enabled by default; subscriptions use their existing separate connections.
 
 API errors, timeouts and disconnects reject the affected promises. Requests are never replayed automatically. `wsAPITimeout` defaults to 10,000 milliseconds waiting for the RPC reply after sending; individual `sendWSAPIRequest()` calls can override it with `{ requestTimeout: 15000 }` as the fourth argument. Connection and authentication use their own lifecycle handling; `public/auth` uses the authentication timeout. Responses and API errors also emit `response` and `exception` events on `getWSClient()`.
 
