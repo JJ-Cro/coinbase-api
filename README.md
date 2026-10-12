@@ -366,7 +366,7 @@ See all clients [here](./src/) for more information on all the functions or the 
 
 ## WebSockets
 
-All available WebSockets can be used via a shared `WebsocketClient`. The WebSocket client will automatically open/track/manage connections as needed. Each unique connection (one per server URL) is tracked using a WsKey (each WsKey is a string - see [WS_KEY_MAP](src/lib/websocket/websocket-util.ts) for a list of supported values - `WS_KEY_MAP` can also be used like an enum).
+All available WebSockets can be used via a shared `WebsocketClient`. The WebSocket client will automatically open/track/manage connections as needed. Each connection is tracked using a WsKey (each WsKey is a string - see [WS_KEY_MAP](src/lib/websocket/websocket-util.ts) for a list of supported values - `WS_KEY_MAP` can also be used like an enum).
 
 Any subscribe/unsubscribe events will need to include a WsKey, so the WebSocket client understands which connection the event should be routed to. See examples below or in the [examples](./examples/) folder on GitHub.
 
@@ -417,6 +417,58 @@ client.subscribe(
 ```
 
 No credentials are required. The client handles liveness checks and restores subscribed topics after reconnecting. Updates preserve the JSON-RPC envelope, with data under `params.data`; acknowledgements use `response` and API errors use `exception`. Public intervals are `100ms` and `agg2`; `raw` requires authentication. See the [public example](./examples/AdvancedTradeGlobal/WebSockets/publicWs.ts) and [channel/event types](./src/types/websockets/advanced-trade-global.ts).
+
+Global connections open on demand and are excluded from `connectAll()`. To preconnect a Global subscription feed, call `connect('advTradeGlobalMarketData')` or `connect('advTradeGlobalUserData')`. Use `connectWSAPI()` to preconnect and authenticate the Global WS API.
+
+#### Global Derivatives Private WebSocket
+
+Use `advTradeGlobalUserData` for account, order, trade, position and portfolio updates:
+
+```javascript
+const client = new WebsocketClient({ apiKey, apiSecret });
+
+client.on('authenticated', ({ wsKey }) => console.log('authenticated:', wsKey));
+client.on('update', (event) => console.log(event.params.channel, event.params.data));
+client.on('exception', (event) => console.error(event));
+
+client.subscribe(
+  ['user.orders.future.USDC.100ms', 'user.portfolio.USDC'],
+  'advTradeGlobalUserData',
+);
+```
+
+The client authenticates with a CDP JWT before subscribing, renews the session before expiry, and authenticates again before restoring subscriptions after reconnecting. Both ECDSA and Ed25519 CDP keys are supported. Private updates preserve the JSON-RPC envelope. Order notifications use arrays for `100ms`/`agg2` and individual objects for `raw`. See the [private example](./examples/AdvancedTradeGlobal/WebSockets/privateWs.ts) and [channel/event types](./src/types/websockets/advanced-trade-global.ts).
+
+#### Global Derivatives WebSocket API
+
+Use `WebsocketAPIClient` for promise-based Global API requests over WebSocket. Its named methods follow `CBAdvancedTradeGlobalClient`, reusing the REST parameter and result types. Responses preserve the JSON-RPC envelope, with the method's data under `result`:
+
+```typescript
+import { WebsocketAPIClient, WS_KEY_MAP } from 'coinbase-api';
+
+const client = new WebsocketAPIClient({ apiKey, apiSecret });
+
+const time = await client.getTime(); // Public methods need no credentials.
+const positions = await client.getPositions({ currency: 'USDC' });
+console.log(time.result, positions.result);
+
+// Alternatively, use the underlying WebsocketClient's typed request interface:
+const response = await client.getWSClient().sendWSAPIRequest(
+  WS_KEY_MAP.advTradeGlobalWSAPI,
+  'private/get_positions',
+  { currency: 'USDC' },
+);
+console.log(response.result);
+
+// When finished:
+await client.logout({ invalidate_token: false });
+```
+
+The dedicated `advTradeGlobalWSAPI` connection uses `wss://drb.coinbase.com/ws/api/v2`. Private calls authenticate automatically, concurrent calls share authentication, and sessions renew before expiry. `connectWSAPI()` optionally warms up an authenticated connection. Reauthentication after reconnect is enabled by default; subscriptions use their existing separate connections.
+
+API errors, timeouts and disconnects reject the affected promises. Requests are never replayed automatically. `wsAPITimeout` defaults to 10,000 milliseconds waiting for the RPC reply after sending; individual `sendWSAPIRequest()` calls can override it with `{ requestTimeout: 15000 }` as the fourth argument. Connection and authentication use their own lifecycle handling; `public/auth` uses the authentication timeout. Responses and API errors also emit `response` and `exception` events on `getWSClient()`.
+
+Session methods include heartbeat configuration, cancel-on-disconnect and logout. Connection-scoped settings must be reapplied after reconnecting. Logout waits for the server's normal close because it sends no JSON-RPC response, and prevents automatic reconnect. See the [WS API example](./examples/AdvancedTradeGlobal/WebSockets/wsApi.ts), [named methods](./src/WebsocketAPIClient.ts) and [request/response maps](./src/types/websockets/wsAPI.ts). Block/RFQ methods remain outside this interface for now.
 
 #### Private Websocket
 
