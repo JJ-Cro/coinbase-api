@@ -34,12 +34,21 @@ const client = new CBAdvancedTradeClient({
 async function getAccounts() {
   try {
     // Get all accounts
-    const accounts = await client.getAccounts({ limit: 10 });
+    // List Accounts returns at most 250 per call. Follow cursor while has_next is true.
+    let page = await client.getAccounts({ limit: 250 });
+    const accounts = [...page.accounts];
+
+    while (page.has_next && page.cursor) {
+      page = await client.getAccounts({ limit: 250, cursor: page.cursor });
+      accounts.push(...page.accounts);
+    }
+
     console.log('Accounts: ', accounts);
+    console.log('Total accounts: ', accounts.length);
 
     // Get specific account details
-    if (accounts.accounts.length > 0) {
-      const accountId = accounts.accounts[0].uuid;
+    if (accounts.length > 0) {
+      const accountId = accounts[0].uuid;
       const accountDetails = await client.getAccount({ account_id: accountId });
       console.log('Account Details: ', accountDetails);
     }
