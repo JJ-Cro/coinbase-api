@@ -28,7 +28,7 @@ import {
   WsConnectionStateEnum,
 } from './lib/websocket/WsStore.types.js';
 import { AdvTradeGlobalAuthRequest } from './types/request/advanced-trade-global-client.js';
-import { AdvTradeGlobalAuthResult } from './types/response/advanced-trade-global-client.js';
+import { AdvTradeGlobalWSAuthResult } from './types/websockets/advanced-trade-global.js';
 import { WsMarket } from './types/websockets/client.js';
 import {
   WsAdvTradeGlobalRequestOperation,
@@ -427,11 +427,9 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
             return [{ eventType: 'exception', event: parsed }];
           }
 
-          const result: AdvTradeGlobalAuthResult | undefined = parsed.result;
+          const result: AdvTradeGlobalWSAuthResult | undefined = parsed.result;
           if (
-            typeof result?.access_token !== 'string' ||
-            !result.access_token.trim() ||
-            result.token_type !== 'bearer' ||
+            result?.token_type !== 'bearer' ||
             !Number.isFinite(result.expires_in) ||
             result.expires_in <= 0
           ) {

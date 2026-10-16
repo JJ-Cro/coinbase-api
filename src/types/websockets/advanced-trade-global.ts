@@ -529,9 +529,15 @@ export type CBAdvancedTradeGlobalPrivateSubscriptionEvent<
   typeof WS_KEY_MAP.advTradeGlobalUserData
 >;
 
+/** WebSocket authentication authorizes the session without requiring a bearer token. */
+export interface AdvTradeGlobalWSAuthResult
+  extends Omit<AdvTradeGlobalAuthResult, 'access_token'> {
+  access_token?: string;
+}
+
 export type CBAdvancedTradeGlobalAuthenticatedEvent =
   CBAdvancedTradeGlobalResponseEvent<
-    AdvTradeGlobalAuthResult,
+    AdvTradeGlobalWSAuthResult,
     | typeof WS_KEY_MAP.advTradeGlobalUserData
     | typeof WS_KEY_MAP.advTradeGlobalWSAPI
   >;

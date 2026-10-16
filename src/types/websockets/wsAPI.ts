@@ -79,7 +79,6 @@ import {
 } from '../request/advanced-trade-global-client.js';
 import {
   AdvTradeGlobalAccessLog,
-  AdvTradeGlobalAuthResult,
   AdvTradeGlobalBookSummary,
   AdvTradeGlobalBuyResult,
   AdvTradeGlobalChangeMarginModelItem,
@@ -135,6 +134,7 @@ import {
   AdvTradeGlobalTradesVolumes,
   AdvTradeGlobalUserTrade,
 } from '../response/advanced-trade-global-client.js';
+import { AdvTradeGlobalWSAuthResult } from './advanced-trade-global.js';
 
 export interface AdvTradeGlobalWSGetTickersByCurrencyRequest {
   currency: string;
@@ -487,7 +487,7 @@ export interface WsAPIWsKeyTopicMap {
 }
 
 export interface WsAPITopicResponseMap {
-  'public/auth': WSAPIResponse<AdvTradeGlobalAuthResult>;
+  'public/auth': WSAPIResponse<AdvTradeGlobalWSAuthResult>;
   'public/get_announcements': WSAPIResponse<
     AdvTradeGlobalGetAnnouncementsItem[]
   >;
