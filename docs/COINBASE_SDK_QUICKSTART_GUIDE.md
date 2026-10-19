@@ -8,17 +8,21 @@ siebly:
       - Spot
       - US Futures
       - International Perpetuals
+      - Global Derivatives
       - Public WebSockets
       - Private WebSockets
+      - WebSocket API
       - Sandboxes
-    summary: Build Coinbase integrations with Advanced Trade REST API calls, public and private WebSocket streams, safe order previews, reconnect recovery, sandbox guidance, and proxy support.
+    summary: Build Coinbase integrations with Advanced Trade REST API calls, Global Derivatives REST and WebSocket API calls, public and private streams, order previews, reconnect recovery, sandboxes, and proxies.
     codeFilename: first-coinbase-api-call.js
     codeStatus: public REST API
     startSectionId: start-building-first-calls
   software:
-    description: Node.js and JavaScript SDK for Coinbase Advanced Trade, Coinbase App, Exchange, International Exchange, Prime, and legacy Commerce REST APIs, plus public and private WebSocket streams.
+    description: Node.js and JavaScript SDK for Coinbase Advanced Trade, Global Derivatives, Coinbase App, Exchange, International Exchange, Prime, and legacy Commerce REST APIs, plus WebSocket streams and the Global WebSocket API.
     topics:
       - Coinbase Advanced Trade API
+      - Coinbase Advanced Trade Global Derivatives API
+      - Global WebSocket API
       - Coinbase App API
       - Coinbase Exchange API
       - Coinbase International Exchange API
@@ -33,6 +37,7 @@ siebly:
     label: Coinbase API JavaScript Tutorial
     topics:
       - Advanced Trade products
+      - Global Derivatives REST and WebSocket API calls
       - REST API response shapes
       - public WebSocket streams
       - private WebSocket streams
@@ -43,17 +48,18 @@ siebly:
       - reconnect recovery
   sdkPagePromo:
     descriptionBeforePackage: 'A practical JavaScript guide to using '
-    descriptionAfterPackage: ' across Coinbase Advanced Trade REST API calls, public and private WebSocket streams, safe order previews, sandboxes, proxies, and reconnect recovery.'
+    descriptionAfterPackage: ' across Coinbase Advanced Trade and Global Derivatives REST API calls, public and private streams, the Global WebSocket API, order previews, sandboxes, proxies, and reconnect recovery.'
     highlights:
       - Advanced Trade public and private REST API calls
+      - Global Derivatives REST and WebSocket API calls
       - Public and private Advanced Trade WebSocket streams
       - Safe Spot order-preview workflow
       - REST API and WebSocket proxy examples
     exampleHref: /examples/Coinbase
     exampleLabel: Coinbase SDK examples
-    architectureClientSummary: CBAdvancedTradeClient, WebsocketClient, and specialized Coinbase REST API clients
+    architectureClientSummary: CBAdvancedTradeClient, CBAdvancedTradeGlobalClient, WebsocketClient, WebsocketAPIClient, and other Coinbase REST API clients
     architectureApiTitle: Coinbase APIs
-    architectureApiSummary: Advanced Trade, Coinbase App, Exchange, International Exchange, Prime, Commerce, and WebSocket streams
+    architectureApiSummary: Advanced Trade, Global Derivatives, Coinbase App, Exchange, International Exchange, Prime, Commerce, and WebSocket streams
   surfaceMap:
     heading: Choose the Coinbase client for the job
     summary: Start with Advanced Trade for retail trading, then use a specialized client only when the account belongs to another Coinbase API product.
@@ -63,15 +69,20 @@ siebly:
     apiItems:
       - Advanced Trade REST API calls
       - Advanced Trade public and private streams
+      - Global Derivatives REST, streams, and WebSocket API calls
       - Coinbase App account and transfer calls
       - Exchange and International institutional APIs
       - Prime trading and custody APIs
       - Legacy Commerce APIs
     packageNodes:
       - label: CBAdvancedTradeClient
-        summary: Advanced Trade products, accounts, orders, portfolios, derivatives, conversions, fees, and payment methods
+        summary: Advanced Trade Spot and US futures, accounts, orders, portfolios, conversions, fees, and payment methods
+      - label: CBAdvancedTradeGlobalClient
+        summary: Global Derivatives instruments, orders, positions, and account state over REST
       - label: WebsocketClient
-        summary: Advanced Trade, Exchange, International, and Prime WebSocket subscriptions
+        summary: Advanced Trade, Global Derivatives, Exchange, International, and Prime WebSocket subscriptions
+      - label: WebsocketAPIClient
+        summary: Global Derivatives requests and order commands over WebSocket
       - label: CBAppClient
         summary: Coinbase App accounts, addresses, transactions, deposits, withdrawals, and public prices
       - label: CBExchangeClient
@@ -90,7 +101,10 @@ siebly:
     rows:
       - eyebrow: Product ID
         code: "product_id: 'BTC-USD'"
-        summary: Select an Advanced Trade Spot, futures, or perpetual product.
+        summary: Select an Advanced Trade Spot or US futures product.
+      - eyebrow: Global instrument
+        code: "instrument_name: 'BTC_USDC-PERPETUAL'"
+        summary: Select a Global Derivatives instrument.
       - eyebrow: Product metadata
         code: "base_increment and price_increment"
         summary: Apply current size and price rules before an order request.
@@ -99,7 +113,10 @@ siebly:
         summary: Scope balances, positions, and permissions to the intended portfolio.
       - eyebrow: Client order ID
         code: "client_order_id"
-        summary: Give an application-owned order a stable identifier.
+        summary: Identify an Advanced Trade Spot or US futures order.
+      - eyebrow: Global order label
+        code: "label"
+        summary: Label a Global order and track its returned order ID for reconciliation.
       - eyebrow: WebSocket connection
         code: "WS_KEY_MAP.advTradeMarketData"
         summary: Route a subscription to the correct public or private connection.
@@ -126,6 +143,9 @@ siebly:
       private-rest: Private REST API
       public-websocket: Public WebSocket
       private-websocket: Private WebSocket
+      global-rest: Global Derivatives REST API
+      global-websocket: Global Derivatives WebSocket streams
+      global-ws-api: Global Derivatives WebSocket API
       spot-order-preview: Spot order preview
       reconnect-recovery: Reconnect recovery
       http-proxy: HTTP or HTTPS proxy
@@ -179,11 +199,13 @@ siebly:
     items:
       - Keep API keys server-side and grant only the permissions each process needs.
       - Keep product ID, portfolio, API family, and wsKey explicit in code and logs.
-      - Set client_order_id on application-owned orders so retries and restarts can reconcile them.
+      - Set client_order_id on Advanced Trade Spot and US futures orders so retries and restarts can reconcile them.
+      - Track Global order IDs; labels are not guaranteed unique.
       - Read product increments, minimum sizes, status flags, and venue before validating an order.
       - Check both HTTP errors and operation-level success fields on order-management responses.
       - Treat an accepted write as pending until a private stream or REST API query confirms state.
-      - Subscribe to heartbeats and reload private state after stream gaps.
+      - Subscribe to heartbeats on the Advanced Trade Spot and US futures feeds; Global heartbeat replies are handled by the SDK.
+      - Reload private state after stream gaps.
       - Keep the system clock synchronized and respect current Coinbase rate limits.
       - Monitor proxy reachability, latency, and egress IP when a proxy is enabled.
   journeys:
@@ -197,6 +219,9 @@ siebly:
       - heading: Stream live data
         summary: Subscribe to public ticker data and private Advanced Trade order updates.
         href: "#websocket-streams"
+      - heading: Use Global Derivatives
+        summary: Read positions, subscribe to market and account updates, and send WebSocket API requests.
+        href: "#advanced-trade-global"
       - heading: Understand order management
         summary: Preview an order safely, then learn how submission, lookup, cancellation, and confirmation fit together.
         href: "#order-management"
@@ -205,7 +230,7 @@ siebly:
         href: "#api-hosts"
   article:
     heading: Build around Coinbase products and account state
-    summary: "This tutorial covers the Coinbase API pieces developers usually need first: Advanced Trade REST API calls, public and private streams, safe order previews, API environments, proxies, and reconnect recovery."
+    summary: "This tutorial covers Advanced Trade and Global Derivatives REST API calls, public and private streams, the Global WebSocket API, order previews, API environments, proxies, and reconnect recovery."
   related:
     cards:
       - heading: Coinbase SDK page
@@ -233,6 +258,8 @@ siebly:
 
 This tutorial uses [`coinbase-api`](https://www.npmjs.com/package/coinbase-api), Siebly's Node.js and JavaScript SDK for Coinbase. This guide will primarily walk you through using the Coinbase Advanced Trade APIs & WebSockets for public market data, authenticated account access, WebSocket streams, and safe order previews.
 
+Use `CBAdvancedTradeClient` for Spot and US futures. For international derivatives, see [Advanced Trade Global](#advanced-trade-global), which uses `CBAdvancedTradeGlobalClient` for REST and `WebsocketAPIClient` for API requests over WebSocket.
+
 The SDK handles REST API authentication, short-lived JWT creation, product-specific WebSocket routing, private subscription signing, reconnects, and resubscriptions. It also provides focused clients for Coinbase App, Exchange, International Exchange, Prime, and legacy Commerce APIs.
 
 **Key links**
@@ -245,6 +272,7 @@ The SDK handles REST API authentication, short-lived JWT creation, product-speci
 - Official documentation: [Coinbase Developer Documentation](https://docs.cdp.coinbase.com/)
 - Advanced Trade REST API: [Advanced Trade API endpoints](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/rest-api)
 - Advanced Trade WebSockets: [WebSocket overview](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/websocket/websocket-overview)
+- Global Derivatives: [Technical migration guide](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/derivatives/technical)
 - API authentication: [Coinbase App API key authentication](https://docs.cdp.coinbase.com/coinbase-app/authentication-authorization/api-key-authentication)
 - Trading-system terms: [Siebly glossary](https://siebly.io/reference/glossary)
 - More JavaScript SDKs: [Siebly.io](https://siebly.io)
@@ -255,15 +283,17 @@ Private Advanced Trade REST API requests use short-lived JSON Web Tokens signed 
 
 `coinbase-api` handles those mechanics and provides a focused client for each API family, so you can focus on your integration without excessive plumbing efforts:
 
-| Client                  | Use it for                                                                             |
-| ----------------------- | -------------------------------------------------------------------------------------- |
-| `CBAdvancedTradeClient` | Advanced Trade products, accounts, orders, portfolios, derivatives, fees, and converts |
-| `WebsocketClient`       | Advanced Trade, Exchange, International, and Prime WebSocket streams                   |
-| `CBAppClient`           | Coinbase App accounts, addresses, transactions, deposits, withdrawals, and prices      |
-| `CBExchangeClient`      | Institutional Exchange market data, trading, profiles, reports, loans, and transfers   |
-| `CBInternationalClient` | International instruments, portfolios, orders, positions, loans, and transfers         |
-| `CBPrimeClient`         | Prime portfolios, balances, orders, activities, allocations, wallets, and transactions |
-| `CBCommerceClient`      | Legacy Commerce charges, checkouts, and events                                         |
+| Client                        | Use it for                                                                               |
+| ----------------------------- | ---------------------------------------------------------------------------------------- |
+| `CBAdvancedTradeClient`       | Advanced Trade Spot and US futures, accounts, orders, portfolios, fees, and converts     |
+| `CBAdvancedTradeGlobalClient` | Global Derivatives instruments, orders, positions, and account state over REST           |
+| `WebsocketClient`             | Advanced Trade, Global Derivatives, Exchange, International, and Prime WebSocket streams |
+| `WebsocketAPIClient`          | Global Derivatives API requests and order commands over WebSocket                        |
+| `CBAppClient`                 | Coinbase App accounts, addresses, transactions, deposits, withdrawals, and prices        |
+| `CBExchangeClient`            | Institutional Exchange market data, trading, profiles, reports, loans, and transfers     |
+| `CBInternationalClient`       | International instruments, portfolios, orders, positions, loans, and transfers           |
+| `CBPrimeClient`               | Prime portfolios, balances, orders, activities, allocations, wallets, and transactions   |
+| `CBCommerceClient`            | Legacy Commerce charges, checkouts, and events                                           |
 
 The Advanced Trade product group is the right starting point for most developers automating their own Coinbase trading account. The other REST API clients use different account products, credentials, permissions, and sometimes an API passphrase. These are typically catered more towards institutional users.
 
@@ -303,6 +333,8 @@ Nothing executable in this tutorial needs transfer or withdrawal access. The ord
 
 Advanced Trade and Coinbase App keys do not use an API passphrase. Coinbase Exchange, International Exchange, and Prime credentials use a separate API key, secret, and passphrase.
 
+Advanced Trade Global also uses a CDP key name and private key, with no passphrase. Use a key with access to the intended Global Derivatives account.
+
 ## Coinbase products and request vocabulary
 
 Several values determine which market, account, and connection a request uses:
@@ -316,11 +348,13 @@ Several values determine which market, account, and connection a request uses:
 | `base_min_size`        | Product metadata                           | Minimum supported base-currency size                                                      |
 | `quote_min_size`       | Product metadata                           | Minimum supported quote-currency size                                                     |
 | Product status flags   | `status`, `trading_disabled`, `limit_only` | Current restrictions that affect valid order requests                                     |
-| Product type and venue | `product_type`, `product_venue`            | Distinguish Spot, US futures, and International perpetual products                        |
+| Product type and venue | `product_type`, `product_venue`            | Advanced Trade product classification and trading venue                                   |
 | Portfolio ID           | `portfolio_uuid`                           | Portfolio that owns balances, permissions, orders, or derivative positions                |
 | Client order ID        | `client_order_id`                          | Application-owned [custom order ID](https://siebly.io/reference/glossary#custom-order-id) |
 | Order configuration    | `market_market_ioc`, `limit_limit_gtc`     | Order type, size, time in force, price, and post-only behavior                            |
 | WebSocket key          | `WS_KEY_MAP.advTradeMarketData`            | [WebSocket key](https://siebly.io/reference/glossary#ws-key) selecting the connection     |
+| Global instrument      | `BTC_USDC-PERPETUAL`                       | Global Derivatives instrument selected with `instrument_name`                             |
+| Global order label     | `label`                                    | Application-supplied order label; not guaranteed unique                                   |
 
 Advanced Trade REST API methods return the endpoint body directly. There is no shared success envelope. Products are objects, accounts and orders are arrays nested inside response objects, and candles are objects inside a `candles` array.
 
@@ -813,10 +847,12 @@ If a write times out without a clear result, query by the known Coinbase order I
 
 ### Know what WebSockets do
 
-`coinbase-api` does not expose a `WebsocketAPIClient` for Coinbase because its supported Coinbase WebSocket interfaces are subscription feeds. Use:
+For Advanced Trade Spot and US futures, use:
 
 - `WebsocketClient` for market and account updates.
 - `CBAdvancedTradeClient` for preview, submit, edit, query, and cancel commands.
+
+Global Derivatives also supports API requests and order commands over WebSocket through `WebsocketAPIClient`. Its subscriptions use `WebsocketClient`. See [Advanced Trade Global](#advanced-trade-global) below.
 
 A subscription response acknowledges a channel. It is not an order acknowledgement and does not confirm account state.
 
@@ -833,12 +869,122 @@ The Advanced Trade client covers more than Spot orders:
 | Payment methods           | `getPaymentMethods()`, `getPaymentMethod()`                                              |
 | US futures                | `getFuturesBalanceSummary()`, `getFuturesPositions()`, `getFuturesSweeps()`              |
 | Futures margin            | `getIntradayMarginSetting()`, `getCurrentMarginWindow()`                                 |
-| International perpetuals  | `getPerpetualsPortfolioSummary()`, `getPerpetualsPositions()`, `getPortfoliosBalances()` |
-| International collateral  | `allocatePortfolio()`, `updateMultiAssetCollateral()`                                    |
 
 US futures and International perpetual products are available only to eligible accounts and jurisdictions. Read product metadata and account state rather than assuming that a product visible in public data is tradable by the authenticated portfolio.
 
+International derivatives use `CBAdvancedTradeGlobalClient`. The older INTX methods on `CBAdvancedTradeClient` are not the Global gateway methods. See Coinbase's [migration guide](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/derivatives/technical) for the endpoint and parameter changes.
+
 For the full method-to-endpoint map, use the [Coinbase SDK endpoint reference](./endpointFunctionList.md).
+
+<!-- siebly:section id="advanced-trade-global" -->
+
+## Advanced Trade Global
+
+Global Derivatives uses the Deribit-powered gateway. Use `CBAdvancedTradeGlobalClient` for REST calls, `WebsocketClient` for subscriptions, and `WebsocketAPIClient` for requests over WebSocket.
+
+The private examples below use `COINBASE_API_KEY_NAME` and `COINBASE_API_PRIVATE_KEY`. Public calls and public subscriptions do not require credentials.
+
+### Read positions over REST
+
+The SDK exchanges a signed CDP JWT for an access token, reuses that token for private requests, and refreshes it before expiry. Successful REST methods return the JSON-RPC `result` directly, so `getPositions()` returns an array.
+
+<!-- siebly:snippet id="global-rest" -->
+
+```javascript
+import { CBAdvancedTradeGlobalClient } from 'coinbase-api';
+
+async function main() {
+  const client = new CBAdvancedTradeGlobalClient({
+    apiKey: process.env.COINBASE_API_KEY_NAME,
+    apiSecret: process.env.COINBASE_API_PRIVATE_KEY,
+  });
+
+  const positions = await client.getPositions({ currency: 'USDC' });
+  const account = await client.getAccountSummary({ currency: 'USDC' });
+  console.log('Positions:', positions);
+  console.log('Account:', account);
+}
+
+main().catch((error) => console.error('Global REST request failed:', error));
+```
+
+Global parameters differ from Advanced Trade Spot. Use `instrument_name`, such as `BTC_USDC-PERPETUAL`, and send prices and sizes as numbers. Order labels use `label`; a label is not an idempotency key. Global has no equivalent of `previewOrder()`. See the [migration guide](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/derivatives/technical) for the full mapping.
+
+### Subscribe to Global streams
+
+Pass complete channel names and the matching `WS_KEY_MAP` value. This example always opens the public feed and adds private subscriptions when both credentials are set.
+
+<!-- siebly:snippet id="global-websocket" -->
+
+```javascript
+import { WebsocketClient, WS_KEY_MAP } from 'coinbase-api';
+
+const apiKey = process.env.COINBASE_API_KEY_NAME;
+const apiSecret = process.env.COINBASE_API_PRIVATE_KEY;
+const client = new WebsocketClient({ apiKey, apiSecret });
+
+client.on('update', ({ wsKey, params }) => {
+  console.log(wsKey, params.channel, params.data);
+});
+client.on('response', (event) => console.log('Response:', event));
+client.on('exception', (event) => console.error('WebSocket error:', event));
+
+client.subscribe(
+  ['quote.BTC_USDC-PERPETUAL', 'ticker.BTC_USDC-PERPETUAL.100ms'],
+  WS_KEY_MAP.advTradeGlobalMarketData,
+);
+
+if (apiKey && apiSecret) {
+  client.subscribe(
+    ['user.orders.future.USDC.100ms', 'user.portfolio.USDC'],
+    WS_KEY_MAP.advTradeGlobalUserData,
+  );
+}
+
+// client.unsubscribe('user.portfolio.USDC', WS_KEY_MAP.advTradeGlobalUserData);
+// client.closeAll();
+```
+
+Private subscriptions wait for session authentication. The SDK renews authentication before expiry and authenticates again before restoring subscriptions after reconnecting. A WS auth response does not need to contain an access token: authentication applies to that socket session.
+
+Global notifications keep their JSON-RPC envelope. Read the channel from `params.channel` and its data from `params.data`. Subscription acknowledgements emit `response`; notifications emit `update`.
+
+### Make Global WebSocket API calls
+
+`WebsocketAPIClient` opens a separate connection from the subscription feeds. Its methods return the JSON-RPC envelope, with the method's data under `result`.
+
+<!-- siebly:snippet id="global-ws-api" -->
+
+```javascript
+import { WebsocketAPIClient } from 'coinbase-api';
+
+async function main() {
+  const client = new WebsocketAPIClient({
+    apiKey: process.env.COINBASE_API_KEY_NAME,
+    apiSecret: process.env.COINBASE_API_PRIVATE_KEY,
+  });
+
+  try {
+    const time = await client.getTime();
+    console.log('Server time:', time.result);
+
+    const positions = await client.getPositions({ currency: 'USDC' });
+    console.log('Positions:', positions.result);
+  } finally {
+    client.getWSClient().closeAll();
+  }
+}
+
+main().catch((error) => console.error('Global WS API request failed:', error));
+```
+
+Private calls authenticate automatically and concurrent calls share authentication. `connectWSAPI()` is available if you want to connect and authenticate before the first request. The underlying connection uses `WS_KEY_MAP.advTradeGlobalWSAPI`.
+
+Order methods include `buy()`, `sell()`, `edit()` and `cancel()`. API errors, timeouts and disconnects reject the request promise. Requests are not replayed automatically. `wsAPITimeout` defaults to 10,000 milliseconds and starts after sending the request. It does not include connection or authentication time.
+
+Use `logout()` to end an authenticated session and wait for the server to close the connection. Use `getWSClient().closeAll()` to close local sockets during shutdown. Connection-scoped settings, such as heartbeat configuration and cancel-on-disconnect, must be set again after reconnecting.
+
+See the [public subscription example](../examples/AdvancedTradeGlobal/WebSockets/publicWs.ts), [private subscription example](../examples/AdvancedTradeGlobal/WebSockets/privateWs.ts), and [WS API example](../examples/AdvancedTradeGlobal/WebSockets/wsApi.ts).
 
 <!-- siebly:section id="websocket-streams" -->
 
@@ -848,16 +994,21 @@ For the full method-to-endpoint map, use the [Coinbase SDK endpoint reference](.
 
 Each `wsKey` identifies one Coinbase WebSocket connection:
 
-| WebSocket key                         | Authentication | Use                                                         |
-| ------------------------------------- | -------------- | ----------------------------------------------------------- |
-| `WS_KEY_MAP.advTradeMarketData`       | Public         | Advanced Trade ticker, level 2, trades, candles, and status |
-| `WS_KEY_MAP.advTradeUserData`         | Required       | Advanced Trade user orders and futures balance summaries    |
-| `WS_KEY_MAP.exchangeMarketData`       | Public         | Coinbase Exchange market-data feed                          |
-| `WS_KEY_MAP.exchangeDirectMarketData` | Required       | Coinbase Exchange direct market-data feed                   |
-| `WS_KEY_MAP.internationalMarketData`  | Required       | Coinbase International market-data feed                     |
-| `WS_KEY_MAP.primeMarketData`          | Required       | Coinbase Prime market-data feed                             |
+| WebSocket key                         | Authentication | Use                                                                    |
+| ------------------------------------- | -------------- | ---------------------------------------------------------------------- |
+| `WS_KEY_MAP.advTradeMarketData`       | Public         | Advanced Trade ticker, level 2, trades, candles, and status            |
+| `WS_KEY_MAP.advTradeUserData`         | Required       | Advanced Trade user orders and futures balance summaries               |
+| `WS_KEY_MAP.advTradeGlobalMarketData` | Public         | Global Derivatives market-data subscriptions                           |
+| `WS_KEY_MAP.advTradeGlobalUserData`   | Required       | Global Derivatives order, trade, position, and portfolio subscriptions |
+| `WS_KEY_MAP.advTradeGlobalWSAPI`      | Private calls  | Global Derivatives API requests through `WebsocketAPIClient`           |
+| `WS_KEY_MAP.exchangeMarketData`       | Public         | Coinbase Exchange market-data feed                                     |
+| `WS_KEY_MAP.exchangeDirectMarketData` | Required       | Coinbase Exchange direct market-data feed                              |
+| `WS_KEY_MAP.internationalMarketData`  | Required       | Coinbase International market-data feed                                |
+| `WS_KEY_MAP.primeMarketData`          | Required       | Coinbase Prime market-data feed                                        |
 
 Pass `WS_KEY_MAP` values explicitly. This keeps connection routing visible and prevents a topic from reaching the wrong API family.
+
+Global connections open on demand and are excluded from `connectAll()`. Use `connect(WS_KEY_MAP.advTradeGlobalMarketData)` or `connect(WS_KEY_MAP.advTradeGlobalUserData)` to open a subscription feed ahead of time, or `connectWSAPI()` for the Global WS API.
 
 ### Use the Advanced Trade channels
 
@@ -1017,16 +1168,17 @@ See:
 
 The package covers several Coinbase products. Their credentials and account models are not interchangeable.
 
-| Client                  | Representative coverage                                                                           |
-| ----------------------- | ------------------------------------------------------------------------------------------------- |
-| `CBAdvancedTradeClient` | Retail trading, portfolios, Spot, US futures, International perpetuals, fees, and converts        |
-| `CBAppClient`           | Coinbase App accounts, addresses, transactions, deposits, withdrawals, and public prices          |
-| `CBExchangeClient`      | Institutional Exchange products, accounts, orders, fills, profiles, reports, loans, and transfers |
-| `CBInternationalClient` | International instruments, portfolios, balances, positions, orders, fills, loans, and transfers   |
-| `CBPrimeClient`         | Prime portfolios, balances, orders, allocations, activities, wallets, and transactions            |
-| `CBCommerceClient`      | Legacy Commerce charges, checkouts, and events                                                    |
+| Client                        | Representative coverage                                                                           |
+| ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| `CBAdvancedTradeClient`       | Retail trading, portfolios, Spot, US futures, fees, and converts                                  |
+| `CBAdvancedTradeGlobalClient` | Global Derivatives instruments, orders, positions, and account state                              |
+| `CBAppClient`                 | Coinbase App accounts, addresses, transactions, deposits, withdrawals, and public prices          |
+| `CBExchangeClient`            | Institutional Exchange products, accounts, orders, fills, profiles, reports, loans, and transfers |
+| `CBInternationalClient`       | International instruments, portfolios, balances, positions, orders, fills, loans, and transfers   |
+| `CBPrimeClient`               | Prime portfolios, balances, orders, allocations, activities, wallets, and transactions            |
+| `CBCommerceClient`            | Legacy Commerce charges, checkouts, and events                                                    |
 
-Use Advanced Trade for a normal Coinbase retail trading account. Coinbase Exchange, International Exchange, and Prime require the matching institutional account and credentials.
+Use Advanced Trade for Spot and US futures and Advanced Trade Global for international derivatives. Coinbase Exchange, International Exchange, and Prime require the matching institutional account and credentials.
 
 `CBCommerceClient` maps the legacy `api.commerce.coinbase.com` charge and checkout endpoints. Coinbase now directs new payment integrations toward Coinbase Business Checkouts. Review the official [Commerce-to-Checkouts migration guide](https://docs.cdp.coinbase.com/coinbase-business/checkout-apis/migrate-from-commerce/api-schema-mapping) before starting a new payments integration.
 
@@ -1036,20 +1188,24 @@ Use Advanced Trade for a normal Coinbase retail trading account. Coinbase Exchan
 
 Each Coinbase client has its own default REST API host. The WebSocket client selects a host from the requested `wsKey`.
 
-| API or environment             | REST API host                                             | WebSocket host or guidance                                                      |
-| ------------------------------ | --------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Advanced Trade live            | `https://api.coinbase.com`                                | `wss://advanced-trade-ws.coinbase.com` for market data                          |
-| Advanced Trade private stream  | `https://api.coinbase.com`                                | `wss://advanced-trade-ws-user.coinbase.com`                                     |
-| Advanced Trade static sandbox  | `https://api-sandbox.coinbase.com` via `useSandbox: true` | No Advanced Trade sandbox WebSocket                                             |
-| Coinbase App live              | `https://api.coinbase.com`                                | No Coinbase App stream in this SDK                                              |
-| Coinbase Exchange live         | `https://api.exchange.coinbase.com`                       | `wss://ws-feed.exchange.coinbase.com` or the authenticated direct feed          |
-| Coinbase Exchange sandbox      | `https://api-public.sandbox.exchange.coinbase.com`        | `wss://ws-feed-public.sandbox.exchange.coinbase.com` or its direct sandbox feed |
-| International Exchange live    | `https://api.international.coinbase.com`                  | `wss://ws-md.international.coinbase.com`                                        |
-| International Exchange sandbox | `https://api-n5e1.coinbase.com`                           | `wss://ws-md.n5e2.coinbase.com`                                                 |
-| Coinbase Prime live            | `https://api.prime.coinbase.com`                          | `wss://ws-feed.prime.coinbase.com`                                              |
-| Legacy Commerce live           | `https://api.commerce.coinbase.com`                       | No Commerce stream in this SDK                                                  |
+| API or environment                               | REST API host                                             | WebSocket host or guidance                                                      |
+| ------------------------------------------------ | --------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Advanced Trade live                              | `https://api.coinbase.com`                                | `wss://advanced-trade-ws.coinbase.com` for market data                          |
+| Advanced Trade private stream                    | `https://api.coinbase.com`                                | `wss://advanced-trade-ws-user.coinbase.com`                                     |
+| Advanced Trade Global public streams             | `https://drb.coinbase.com`                                | `wss://streams.drb.coinbase.com/ws/api/v2`                                      |
+| Advanced Trade Global private streams and WS API | `https://drb.coinbase.com`                                | `wss://drb.coinbase.com/ws/api/v2`                                              |
+| Advanced Trade static sandbox                    | `https://api-sandbox.coinbase.com` via `useSandbox: true` | No Advanced Trade sandbox WebSocket                                             |
+| Coinbase App live                                | `https://api.coinbase.com`                                | No Coinbase App stream in this SDK                                              |
+| Coinbase Exchange live                           | `https://api.exchange.coinbase.com`                       | `wss://ws-feed.exchange.coinbase.com` or the authenticated direct feed          |
+| Coinbase Exchange sandbox                        | `https://api-public.sandbox.exchange.coinbase.com`        | `wss://ws-feed-public.sandbox.exchange.coinbase.com` or its direct sandbox feed |
+| International Exchange live                      | `https://api.international.coinbase.com`                  | `wss://ws-md.international.coinbase.com`                                        |
+| International Exchange sandbox                   | `https://api-n5e1.coinbase.com`                           | `wss://ws-md.n5e2.coinbase.com`                                                 |
+| Coinbase Prime live                              | `https://api.prime.coinbase.com`                          | `wss://ws-feed.prime.coinbase.com`                                              |
+| Legacy Commerce live                             | `https://api.commerce.coinbase.com`                       | No Commerce stream in this SDK                                                  |
 
 The [Advanced Trade static sandbox](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/sandbox) returns predefined mock responses for a limited set of account and order endpoints. It does not run a matching engine and is not a funded trading environment. Enable it on `CBAdvancedTradeClient` with `useSandbox: true` (REST only). There is no Advanced Trade WebSocket sandbox.
+
+Global REST methods use JSON-RPC at `/api/v2`; the auth exchange uses `/api/v2/public/auth`. The SDK has no configured sandbox for Global REST or its WebSocket connections.
 
 `useSandbox: true` is also supported by `CBExchangeClient` and `CBInternationalClient`, and by the matching Exchange or International WebSocket connections. On `WebsocketClient`, `useSandbox` is client-wide: it applies to every `wsKey` on that instance. Do not set `useSandbox: true` on an Advanced Trade WebSocket connection. Sandbox credentials are separate from production credentials where the product requires them. Advanced Trade's static sandbox also accepts unauthenticated requests for its mocked endpoints.
 
@@ -1349,7 +1505,7 @@ Do not assume that the rules for `BTC-USD` apply to another Spot, futures, or pe
 
 ### Use client order IDs
 
-Generate and persist a unique `client_order_id` for each application-owned order. Store it with the Coinbase order ID, product, side, configuration, requested size, and creation time.
+For Advanced Trade Spot and US futures, generate and persist a unique `client_order_id` for each application-owned order. Store it with the Coinbase order ID, product, side, configuration, requested size, and creation time. Global Derivatives uses `label`, which is not guaranteed unique. Track the returned order ID and reconcile state before retrying an uncertain request.
 
 ### Confirm final state
 
@@ -1359,7 +1515,9 @@ After an uncertain timeout, reconcile known identifiers before retrying.
 
 ### Keep WebSocket streams healthy
 
-Subscribe to `heartbeats` alongside other Advanced Trade channels. Monitor sequence numbers, heartbeat counters, exceptions, reconnects, and time since the last update.
+Subscribe to `heartbeats` alongside channels on `WS_KEY_MAP.advTradeMarketData` or `WS_KEY_MAP.advTradeUserData`. Monitor sequence numbers, heartbeat counters, exceptions, reconnects, and time since the last update.
+
+Global uses different heartbeat messages. The SDK handles protocol ping/pong and answers server `test_request` messages with `public/test`; no `heartbeats` subscription is needed for Global.
 
 Reload the affected account state after a private stream gap.
 
@@ -1381,7 +1539,7 @@ Yes. Every example in this tutorial is plain JavaScript. The package also publis
 
 ### Which REST API client should I use?
 
-Use `CBAdvancedTradeClient` for a normal Coinbase retail trading account. Use the App, Exchange, International, Prime, or Commerce client only when the Coinbase account and workflow belong to that API family.
+Use `CBAdvancedTradeClient` for Advanced Trade Spot and US futures, and `CBAdvancedTradeGlobalClient` for Global Derivatives. Use the App, Exchange, International, Prime, or Commerce client when the account and workflow belong to that API family.
 
 ### What are `COINBASE_API_KEY_NAME` and `COINBASE_API_PRIVATE_KEY`?
 
@@ -1415,9 +1573,13 @@ Yes, a static REST sandbox. `useSandbox: true` on `CBAdvancedTradeClient` routes
 
 No. It validates and estimates the request but does not submit it to the matching engine. Check `errs` and `warning` before using its estimates.
 
-### Why is there no Coinbase `WebsocketAPIClient`?
+### What does `WebsocketAPIClient` support?
 
-The Coinbase WebSocket interfaces supported by this SDK are subscription feeds. Use `WebsocketClient` for streams and the matching REST API client for order commands.
+`WebsocketAPIClient` supports Global Derivatives API requests and order commands over WebSocket. Use `WebsocketClient` for subscriptions. Advanced Trade Spot and US futures order commands use `CBAdvancedTradeClient`.
+
+### Why do Global REST and WS API calls return different shapes?
+
+`CBAdvancedTradeGlobalClient` returns the JSON-RPC `result` directly. `WebsocketAPIClient` preserves the envelope, so read `response.result`. Global subscription updates use `event.params.data`.
 
 ### What does the first private `user` update contain?
 
@@ -1452,6 +1614,7 @@ API key authentication is for server-side access to an account you control. Use 
 - [SDK endpoint map](./endpointFunctionList.md)
 - [Advanced Trade REST API documentation](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/rest-api)
 - [Advanced Trade WebSocket documentation](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/websocket/websocket-overview)
+- [Global Derivatives migration guide](https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/guides/derivatives/technical)
 - [Coinbase authentication documentation](https://docs.cdp.coinbase.com/coinbase-app/authentication-authorization/api-key-authentication)
 - [Siebly glossary](https://siebly.io/reference/glossary)
 - [Exchange State](https://siebly.io/reference/exchange-state)
