@@ -15,7 +15,7 @@
 [![Build & Test](https://github.com/sieblyio/coinbase-api/actions/workflows/e2etest.yml/badge.svg?branch=master)](https://github.com/sieblyio/coinbase-api/actions/workflows/e2etest.yml)
 [![last commit](https://img.shields.io/github/last-commit/sieblyio/coinbase-api)][1]
 [![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/nodetraders)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sieblyio/coinbase-api)
+[![Coinbase Tutorial](https://img.shields.io/badge/Coinbase%20Tutorial-siebly.io-blue)](https://siebly.io/sdk/coinbase/javascript/tutorial)
 
 [1]: https://www.npmjs.com/package/coinbase-api
 
